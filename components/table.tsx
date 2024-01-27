@@ -20,6 +20,8 @@ import {
   Selection,
   ChipProps,
   SortDescriptor,
+  Select,
+  SelectItem,
 } from "@nextui-org/react";
 import { PlusIcon } from "./plusIcon";
 import { VerticalDotsIcon } from "./verticalDotsIcon";
@@ -27,12 +29,17 @@ import { ChevronDownIcon } from "./chevronDownIcon";
 import { SearchIcon } from "./searchIcon";
 import { capitalize } from "./utils";
 import { getEvents } from "@/lib/getEvents";
+import { formatDate } from "@/utils/formatDate";
 
 const columns = [
   { name: "Event", uid: "title", sortable: true },
-  { name: "Description", uid: "description", sortable: true },
+  // { name: "Description", uid: "description", sortable: true },
   { name: "Location", uid: "location", sortable: true },
-  { name: "Date", uid: "date", sortable: true },
+  { name: "Release Date", uid: "releaseDate", sortable: true },
+  { name: "Start Date", uid: "startDate", sortable: true },
+  { name: "Deadline", uid: "deadline", sortable: true },
+  { name: "Applications", uid: "applicationCount", sortable: true },
+  { name: "Total Hours", uid: "totalWorkingHours", sortable: true },
   { name: "Status", uid: "status", sortable: true },
   { name: "Actions", uid: "actions" },
 ];
@@ -40,21 +47,25 @@ const columns = [
 const statusOptions = [
   { name: "Active", uid: "active" },
   { name: "Paused", uid: "paused" },
-  { name: "Vacation", uid: "vacation" },
+  { name: "Closed", uid: "closed" },
   // Add other statuses as needed
 ];
 
 const statusColorMap: Record<string, ChipProps["color"]> = {
   active: "success",
-  paused: "danger",
-  vacation: "warning",
+  paused: "warning",
+  closed: "danger",
 };
 
 const INITIAL_VISIBLE_COLUMNS = [
   "title",
-  "description",
+  // "description",
   "location",
-  "date",
+  "releaseDate",
+  "startDate",
+  "deadline",
+  "applicationCount",
+  "totalWorkingHours",
   "status",
   "actions",
 ];
@@ -62,7 +73,7 @@ const INITIAL_VISIBLE_COLUMNS = [
 export default function TableTemp() {
   const { data: session, status } = useSession();
 
-  const [events, setEvents] = useState<Event[]>([]); // Renamed from events to events for clarity
+  const [events, setEvents] = useState<Event[]>([]);
   const [filterValue, setFilterValue] = useState("");
   const [selectedKeys, setSelectedKeys] = useState<Selection>(new Set([]));
   const [visibleColumns, setVisibleColumns] = useState<Selection>(
@@ -71,7 +82,7 @@ export default function TableTemp() {
   const [statusFilter, setStatusFilter] = useState<Selection>("all");
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [sortDescriptor, setSortDescriptor] = useState<SortDescriptor>({
-    column: "date",
+    column: "releaseDate",
     direction: "ascending",
   });
   const [page, setPage] = useState(1);
@@ -129,9 +140,9 @@ export default function TableTemp() {
 
   const sortedItems = React.useMemo(() => {
     return [...items].sort((a, b) => {
-      if (sortDescriptor.column === "date") {
-        const dateA = new Date(a.date).getTime();
-        const dateB = new Date(b.date).getTime();
+      if (sortDescriptor.column === "releaseDate") {
+        const dateA = new Date(a.releaseDate).getTime();
+        const dateB = new Date(b.releaseDate).getTime();
         const cmp = dateA < dateB ? -1 : dateA > dateB ? 1 : 0;
         return sortDescriptor.direction === "descending" ? -cmp : cmp;
       } else {
@@ -143,24 +154,57 @@ export default function TableTemp() {
     });
   }, [sortDescriptor, items]);
 
+  const handleDeleteEvent = async (eventId: string) => {
+    if (!session) {
+      console.error("No session found");
+      // Handle the case when there is no session (e.g., redirect to login)
+      return;
+    }
+
+    try {
+      const response = await fetch(
+        `http://localhost:8500/events/delete/${eventId}`,
+        {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${session.user.token}`, // Include the JWT token in the Authorization header
+          },
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to delete the event");
+      }
+
+      const updatedEvents = events.filter((event) => event._id !== eventId);
+      setEvents(updatedEvents);
+    } catch (error) {
+      console.error("Error deleting event:", error);
+      // Handle error (e.g., show a notification to the user)
+    }
+  };
+
   function getDropdownItems(event: Event) {
     // Always include these items
     const items = [
       <DropdownItem key="view" as="a" href={`/events/${event._id}`}>
         View
       </DropdownItem>,
-      <DropdownItem key="apply" as="a" href={`/event/${event._id}`}>
-        Apply
-      </DropdownItem>,
+      // <DropdownItem key="apply" as="a" href={`/event/${event._id}`}>
+      //   Apply
+      // </DropdownItem>,
     ];
 
     // Add additional items for admin users
     if (session && session.user.role === "admin") {
       items.push(
-        <DropdownItem key="edit" as="a" href={`/event/${event._id}`}>
+        <DropdownItem key="edit" as="a" href={`/events/${event._id}/edit`}>
           Edit
         </DropdownItem>,
-        <DropdownItem key="delete">Delete</DropdownItem>
+        <DropdownItem key="delete" onClick={() => handleDeleteEvent(event._id)}>
+          Delete
+        </DropdownItem>
       );
     }
 
@@ -174,14 +218,17 @@ export default function TableTemp() {
       switch (columnKey) {
         case "title":
           return <p>{event.title}</p>;
-        case "description":
+        case "releaseDate":
           return (
-            <div className="flex flex-col">
-              <p className="text-bold text-small capitalize">{cellValue}</p>
-              <p className="text-bold text-tiny capitalize text-default-400">
-                {event.description}
-              </p>
-            </div>
+            <div className="flex flex-col">{formatDate(event.releaseDate)}</div>
+          );
+        case "startDate":
+          return (
+            <div className="flex flex-col">{formatDate(event.startDate)}</div>
+          );
+        case "deadline":
+          return (
+            <div className="flex flex-col">{formatDate(event.deadline)}</div>
           );
         case "status":
           return (
@@ -218,7 +265,7 @@ export default function TableTemp() {
           return cellValue;
       }
     },
-    [session]
+    [session, events]
   );
 
   const onNextPage = React.useCallback(() => {
@@ -322,7 +369,12 @@ export default function TableTemp() {
               </DropdownMenu>
             </Dropdown>
             {session && session.user.role === "admin" && (
-              <Button color="primary" endContent={<PlusIcon />}>
+              <Button
+                as={"a"}
+                href="/add-event"
+                color="primary"
+                endContent={<PlusIcon />}
+              >
                 Add New
               </Button>
             )}
@@ -332,17 +384,21 @@ export default function TableTemp() {
           <span className="text-default-400 text-small">
             Total {events.length} events
           </span>
-          <label className="flex items-center text-default-400 text-small">
-            Rows per page:
-            <select
-              className="bg-transparent outline-none text-default-400 text-small"
-              onChange={onRowsPerPageChange}
-            >
-              <option value="5">5</option>
-              <option value="10">10</option>
-              <option value="15">15</option>
-            </select>
-          </label>
+          <Select
+            label="Rows per page:"
+            className="w-36 sm:max-w-xs"
+            onChange={onRowsPerPageChange}
+          >
+            <SelectItem key="5" value="5">
+              5
+            </SelectItem>
+            <SelectItem key="10" value="10">
+              10
+            </SelectItem>
+            <SelectItem key="15" value="15">
+              15
+            </SelectItem>
+          </Select>
         </div>
       </div>
     );
