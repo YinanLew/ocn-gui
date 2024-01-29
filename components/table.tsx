@@ -30,6 +30,7 @@ import { SearchIcon } from "./searchIcon";
 import { capitalize } from "./utils";
 import { getEvents } from "@/lib/getEvents";
 import { formatDate } from "@/utils/formatDate";
+import { AuthRequiredError, DataFetchFailedError } from "@/lib/exceptions";
 
 const columns = [
   { name: "Event", uid: "title", sortable: true },
@@ -72,6 +73,7 @@ const INITIAL_VISIBLE_COLUMNS = [
 
 export default function TableTemp() {
   const { data: session, status } = useSession();
+  // const [error, setError] = useState("");
 
   const [events, setEvents] = useState<Event[]>([]);
   const [filterValue, setFilterValue] = useState("");
@@ -93,11 +95,15 @@ export default function TableTemp() {
         const eventsData = await getEvents();
         setEvents(eventsData || []); // Ensure the fallback to an empty array
       } catch (error) {
-        console.error("Error fetching events:", error);
+        // setError("error");
       }
     }
     fetchData();
   }, []);
+
+  // if (error) {
+  //   throw new DataFetchFailedError();
+  // }
 
   const hasSearchFilter = Boolean(filterValue);
 
@@ -156,9 +162,7 @@ export default function TableTemp() {
 
   const handleDeleteEvent = async (eventId: string) => {
     if (!session) {
-      console.error("No session found");
-      // Handle the case when there is no session (e.g., redirect to login)
-      return;
+      throw new AuthRequiredError();
     }
 
     try {
@@ -303,10 +307,10 @@ export default function TableTemp() {
   }, []);
 
   const topContent = React.useMemo(() => {
-    const dropdownColumns =
-      session && session.user.role === "admin"
-        ? columns
-        : columns.filter((column) => column.name !== "Actions");
+    const dropdownColumns = columns;
+    // session && session.user.role === "admin"
+    //   ? columns
+    //   : columns.filter((column) => column.name !== "Actions");
     return (
       <div className="flex flex-col gap-4">
         <div className="flex justify-between gap-3 items-end">

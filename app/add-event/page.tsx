@@ -1,14 +1,19 @@
 "use client";
 import React, { useState } from "react";
+import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { createEvent } from "@/lib/createEvent";
 import { title } from "@/components/primitives";
 import { Input, Select, SelectItem, Textarea, Button } from "@nextui-org/react";
 import { EventFormData } from "@/types";
+import { AuthRequiredError } from "@/lib/exceptions";
 
 export default function AddEventPage() {
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
   const token = session?.user.token;
+  const router = useRouter();
+
+  const [error, setError] = useState("");
   const currentDate = new Date().toISOString().split("T")[0];
   const [formData, setFormData] = useState<EventFormData>({
     title: "",
@@ -40,19 +45,26 @@ export default function AddEventPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!token) {
-      console.error("No token found, user might not be authenticated.");
-      return;
+      throw new AuthRequiredError();
     }
 
     try {
-      const data = await createEvent(formData, token);
-      console.log(data);
-      // Handle success (e.g., show a success message, redirect, etc.)
+      await createEvent(formData, token);
+      router.push("/events"); // Handle success (e.g., show a success message, redirect, etc.)
     } catch (error) {
       console.error("Error creating event:", error);
+      setError(`Error creating event: "${error}`);
       // Handle error (e.g., show an error message)
     }
   };
+
+  if (error) {
+    throw new AuthRequiredError();
+  }
+
+  if (status === "loading") {
+    return <div className={title()}>Loading...</div>;
+  }
 
   return (
     <div>
@@ -162,7 +174,9 @@ export default function AddEventPage() {
             value={formData.description}
             onChange={handleChange}
           />
-          <Button type="submit">Create Event</Button>
+          <Button className="mt-10" type="submit">
+            Create Event
+          </Button>
         </form>
       </div>
     </div>

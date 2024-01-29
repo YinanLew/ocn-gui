@@ -7,6 +7,7 @@ import { ApplicationFormData, Event, Params } from "@/types";
 import { Button } from "@nextui-org/react";
 import { formatDate } from "@/utils/formatDate";
 import ApplicationForm from "@/components/applicationForm";
+import { AuthRequiredError } from "@/lib/exceptions";
 
 export default function EventPage({ params: { eventId } }: Params) {
   const [event, setEvent] = useState<Event>();
@@ -25,6 +26,9 @@ export default function EventPage({ params: { eventId } }: Params) {
   }, [eventId]);
 
   const handleApplyClick = async () => {
+    if (!session) {
+      throw new AuthRequiredError();
+    }
     if (session) {
       const applicationData = {
         eventId: eventId,
@@ -86,7 +90,7 @@ export default function EventPage({ params: { eventId } }: Params) {
   };
 
   if (status === "loading") {
-    return <div>Loading...</div>;
+    return <div className={title()}>Loading...</div>;
   }
 
   const isEventClosed = event?.status === "closed";
