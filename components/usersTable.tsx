@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
-import { Event } from "@/types";
+import { FlattenedApplication, UsersTableTempProps } from "@/types";
 import {
   Table,
   TableHeader,
@@ -29,54 +29,56 @@ import { VerticalDotsIcon } from "./verticalDotsIcon";
 import { ChevronDownIcon } from "./chevronDownIcon";
 import { SearchIcon } from "./searchIcon";
 import { capitalize } from "./utils";
-import { getEvents } from "@/lib/getEvents";
 import { formatDate } from "@/utils/formatDate";
 import { AuthRequiredError, DataFetchFailedError } from "@/lib/exceptions";
 
 const columns = [
-  { name: "Event", uid: "title", sortable: true },
+  { name: "Event", uid: "eventTitle", sortable: true },
+  { name: "First Name", uid: "firstName", sortable: true },
   // { name: "Description", uid: "description", sortable: true },
-  { name: "Location", uid: "location", sortable: true },
-  { name: "Release Date", uid: "releaseDate", sortable: true },
-  { name: "Start Date", uid: "startDate", sortable: true },
-  { name: "Deadline", uid: "deadline", sortable: true },
-  { name: "Applications", uid: "applicationCount", sortable: true },
-  { name: "Total Hours", uid: "totalWorkingHours", sortable: true },
+  { name: "Last Name", uid: "lastName", sortable: true },
+  { name: "Address", uid: "address", sortable: true },
+  { name: "Phone", uid: "phoneNumber", sortable: true },
+  { name: "Email", uid: "email", sortable: true },
+  { name: "Application Date", uid: "createdAt", sortable: true },
+  { name: "Speaking", uid: "spokenLanguage", sortable: true },
+  { name: "Writing", uid: "writtenLanguage", sortable: true },
   { name: "Status", uid: "status", sortable: true },
   { name: "Actions", uid: "actions" },
 ];
 
 const statusOptions = [
-  { name: "Active", uid: "active" },
-  { name: "Paused", uid: "paused" },
-  { name: "Closed", uid: "closed" },
+  { name: "Verified", uid: "verified" },
+  { name: "Paused", uid: "pending" },
+  { name: "Closed", uid: "rejected" },
   // Add other statuses as needed
 ];
 
 const statusColorMap: Record<string, ChipProps["color"]> = {
-  active: "success",
-  paused: "warning",
-  closed: "danger",
+  verified: "success",
+  pending: "warning",
+  rejected: "danger",
 };
 
 const INITIAL_VISIBLE_COLUMNS = [
-  "title",
-  // "description",
-  "location",
-  "releaseDate",
-  "startDate",
-  "deadline",
-  "applicationCount",
-  "totalWorkingHours",
+  "eventTitle",
+  "firstName",
+  "lastName",
+  "address",
+  "phoneNumber",
+  "email",
+  "createdAt",
+  "spokenLanguage",
+  "writtenLanguage",
   "status",
   "actions",
 ];
 
-export default function TableTemp() {
+export default function UsersTableTemp({ applications }: UsersTableTempProps) {
   const { data: session, status } = useSession();
   // const [error, setError] = useState("");
 
-  const [events, setEvents] = useState<Event[]>([]);
+  // const [applications, setApplications] = useState<Application[]>([]);
   const [filterValue, setFilterValue] = useState("");
   const [selectedKeys, setSelectedKeys] = useState<Selection>(new Set([]));
   const [visibleColumns, setVisibleColumns] = useState<Selection>(
@@ -91,20 +93,11 @@ export default function TableTemp() {
   const [page, setPage] = useState(1);
 
   useEffect(() => {
-    async function fetchData() {
-      try {
-        const eventsData = await getEvents();
-        setEvents(eventsData || []); // Ensure the fallback to an empty array
-      } catch (error) {
-        // setError("error");
-      }
-    }
-    fetchData();
-  }, []);
-
-  // if (error) {
-  //   throw new DataFetchFailedError();
-  // }
+    const idsAreUnique =
+      new Set(applications.map((app) => app.eventUniqueId)).size ===
+      applications.length;
+    console.assert(idsAreUnique, "IDs are not unique", applications);
+  }, [applications]);
 
   const hasSearchFilter = Boolean(filterValue);
 
@@ -117,11 +110,11 @@ export default function TableTemp() {
   }, [visibleColumns]);
 
   const filteredItems = React.useMemo(() => {
-    let filteredUsers = [...events];
+    let filteredUsers = [...applications];
 
     if (hasSearchFilter) {
       filteredUsers = filteredUsers.filter((user) =>
-        user.title.toLowerCase().includes(filterValue.toLowerCase())
+        user.firstName.toLowerCase().includes(filterValue.toLowerCase())
       );
     }
     if (
@@ -134,7 +127,7 @@ export default function TableTemp() {
     }
 
     return filteredUsers;
-  }, [events, filterValue, statusFilter]);
+  }, [applications, filterValue, statusFilter]);
 
   const pages = Math.ceil(filteredItems.length / rowsPerPage);
 
@@ -147,14 +140,14 @@ export default function TableTemp() {
 
   const sortedItems = React.useMemo(() => {
     return [...items].sort((a, b) => {
-      if (sortDescriptor.column === "releaseDate") {
-        const dateA = new Date(a.releaseDate).getTime();
-        const dateB = new Date(b.releaseDate).getTime();
+      if (sortDescriptor.column === "createdAt") {
+        const dateA = new Date(a.createdAt).getTime();
+        const dateB = new Date(b.createdAt).getTime();
         const cmp = dateA < dateB ? -1 : dateA > dateB ? 1 : 0;
         return sortDescriptor.direction === "descending" ? -cmp : cmp;
       } else {
-        const first = a[sortDescriptor.column as keyof Event];
-        const second = b[sortDescriptor.column as keyof Event];
+        const first = a[sortDescriptor.column as keyof FlattenedApplication];
+        const second = b[sortDescriptor.column as keyof FlattenedApplication];
         const cmp = first < second ? -1 : first > second ? 1 : 0;
         return sortDescriptor.direction === "descending" ? -cmp : cmp;
       }
@@ -168,7 +161,7 @@ export default function TableTemp() {
 
     try {
       const response = await fetch(
-        `http://localhost:8500/events/delete/${eventId}`,
+        `http://localhost:8500/applications/delete/${eventId}`,
         {
           method: "DELETE",
           headers: {
@@ -179,24 +172,29 @@ export default function TableTemp() {
       );
 
       if (!response.ok) {
-        throw new Error("Failed to delete the event");
+        throw new Error("Failed to delete the application");
       }
 
-      const updatedEvents = events.filter((event) => event._id !== eventId);
-      setEvents(updatedEvents);
+      const updatedApplications = applications.filter(
+        (application) => application.eventId !== eventId
+      );
     } catch (error) {
-      console.error("Error deleting event:", error);
+      console.error("Error deleting application:", error);
       // Handle error (e.g., show a notification to the user)
     }
   };
 
-  function getDropdownItems(event: Event) {
+  function getDropdownItems(application: FlattenedApplication) {
     // Always include these items
     const items = [
-      <DropdownItem key="view" as="a" href={`/events/${event._id}`}>
+      <DropdownItem
+        key="view"
+        as="a"
+        href={`/applications/${application.eventId}`}
+      >
         View
       </DropdownItem>,
-      // <DropdownItem key="apply" as="a" href={`/event/${event._id}`}>
+      // <DropdownItem key="apply" as="a" href={`/application/${application.eventId}`}>
       //   Apply
       // </DropdownItem>,
     ];
@@ -204,10 +202,17 @@ export default function TableTemp() {
     // Add additional items for admin users
     if (session && session.user.role === "admin") {
       items.push(
-        <DropdownItem key="edit" as="a" href={`/events/${event._id}/edit`}>
+        <DropdownItem
+          key="edit"
+          as="a"
+          href={`/applications/${application.eventId}/edit`}
+        >
           Edit
         </DropdownItem>,
-        <DropdownItem key="delete" onClick={() => handleDeleteEvent(event._id)}>
+        <DropdownItem
+          key="delete"
+          onClick={() => handleDeleteEvent(application.eventId)}
+        >
           Delete
         </DropdownItem>
       );
@@ -217,36 +222,40 @@ export default function TableTemp() {
   }
 
   const renderCell = React.useCallback(
-    (event: Event, columnKey: React.Key) => {
-      const cellValue = event[columnKey as keyof Event];
+    (application: FlattenedApplication, columnKey: React.Key) => {
+      const cellValue = application[columnKey as keyof FlattenedApplication];
 
       switch (columnKey) {
-        case "title":
-          return <p>{event.title}</p>;
-        case "releaseDate":
+        case "eventTitle":
+          return <p>{application.eventTitle}</p>;
+        case "firstName":
+          return <p>{application.firstName}</p>;
+        case "lastName":
+          return <div className="flex flex-col">{application.lastName}</div>;
+        case "address":
+          return <div className="flex flex-col">{application.address}</div>;
+        case "phoneNumber":
+          return <div className="flex flex-col">{application.phoneNumber}</div>;
+        case "email":
+          return <div className="flex flex-col">{application.email}</div>;
+        case "createdAt":
           return (
-            <div className="flex flex-col">{formatDate(event.releaseDate)}</div>
+            <div className="flex flex-col">
+              {formatDate(application.createdAt)}
+            </div>
           );
-        case "startDate":
-          return (
-            <div className="flex flex-col">{formatDate(event.startDate)}</div>
-          );
-        case "deadline":
-          return (
-            <div className="flex flex-col">{formatDate(event.deadline)}</div>
-          );
-        case "applicationCount":
-          // Render the applicationCount with a Link
-          return (
-            <Link href={`/applications/${event._id}`} color="primary">
-              {cellValue.toString()}
-            </Link>
-          );
+        // case "applicationCount":
+        //   // Render the applicationCount with a Link
+        //   return (
+        //     <Link href={`/applications/${application.eventId}`} color="primary">
+        //       {cellValue.toString()}
+        //     </Link>
+        //   );
         case "status":
           return (
             <Chip
               className="capitalize"
-              color={statusColorMap[event.status]}
+              color={statusColorMap[application.status]}
               size="sm"
               variant="flat"
             >
@@ -267,8 +276,8 @@ export default function TableTemp() {
                     <VerticalDotsIcon className="text-default-300" />
                   </Button>
                 </DropdownTrigger>
-                <DropdownMenu aria-label="Action Items" items={events}>
-                  {getDropdownItems(event)}
+                <DropdownMenu aria-label="Action Items" items={applications}>
+                  {getDropdownItems(application)}
                 </DropdownMenu>
               </Dropdown>
             </div>
@@ -277,7 +286,7 @@ export default function TableTemp() {
           return cellValue;
       }
     },
-    [session, events]
+    [session, applications]
   );
 
   const onNextPage = React.useCallback(() => {
@@ -383,7 +392,7 @@ export default function TableTemp() {
             {session && session.user.role === "admin" && (
               <Button
                 as={"a"}
-                href="/add-event"
+                href="/add-application"
                 color="primary"
                 endContent={<PlusIcon />}
               >
@@ -394,7 +403,7 @@ export default function TableTemp() {
         </div>
         <div className="flex justify-between items-center">
           <span className="text-default-400 text-small">
-            Total {events.length} events
+            Total {applications.length} applications
           </span>
           <Select
             label="Rows per page:"
@@ -420,7 +429,7 @@ export default function TableTemp() {
     visibleColumns,
     onSearchChange,
     onRowsPerPageChange,
-    events.length,
+    applications.length,
     hasSearchFilter,
     session,
   ]);
@@ -497,9 +506,9 @@ export default function TableTemp() {
           </TableColumn>
         )}
       </TableHeader>
-      <TableBody emptyContent={"No events found"} items={sortedItems}>
+      <TableBody emptyContent={"No applications found"} items={sortedItems}>
         {(item) => (
-          <TableRow key={item._id}>
+          <TableRow key={item.eventUniqueId}>
             {(columnKey) => (
               <TableCell>{renderCell(item, columnKey)}</TableCell>
             )}

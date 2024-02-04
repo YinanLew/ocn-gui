@@ -12,13 +12,16 @@ import { AuthRequiredError } from "@/lib/exceptions";
 export default function EventPage({ params: { eventId } }: Params) {
   const [event, setEvent] = useState<Event>();
   const { data: session, status } = useSession();
+  const [error, setError] = useState<string>();
 
   useEffect(() => {
     async function fetchData() {
       try {
         const eventData = await getEvent(eventId);
         setEvent(eventData); // Ensure the fallback to an empty array
+        setError("");
       } catch (error) {
+        setError(`Error: ${error}`);
         console.error("Error fetching events:", error);
       }
     }
@@ -29,35 +32,39 @@ export default function EventPage({ params: { eventId } }: Params) {
     if (!session) {
       throw new AuthRequiredError();
     }
-    if (session) {
-      const applicationData = {
-        eventId: eventId,
-      };
 
-      try {
-        const response = await fetch(
-          "http://localhost:8500/application/submit",
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${session.user.token}`,
-            },
-            body: JSON.stringify(applicationData),
-          }
-        );
+    const applicationData = {
+      eventId: eventId,
+    };
 
-        if (!response.ok) {
-          throw new Error(`Error: ${response.statusText}`);
-        }
+    try {
+      const response = await fetch("http://localhost:8500/application/submit", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${session.user.token}`,
+        },
+        body: JSON.stringify(applicationData),
+      });
 
-        const result = await response.json();
-        console.log("Application submitted successfully", result);
-        // Handle success (e.g., show a success message or redirect)
-      } catch (error) {
-        console.error("Failed to submit application:", error);
-        // Handle errors (e.g., show an error message)
+      if (!response.ok) {
+        const errorResponse = await response.json();
+        setError(`Error: ${errorResponse.error}`);
+        return;
       }
+
+      const result = await response.json();
+      console.log("Application submitted successfully", result);
+    } catch (error) {
+      // Here, we handle network errors or other unexpected errors
+      if (error instanceof Error) {
+        setError(`Error: ${error.message}`);
+        console.error("Failed to submit application:", error);
+      } else {
+        setError("Error: An unexpected error occurred");
+        console.error("Failed to submit application:", error);
+      }
+      // Handle errors (e.g., show an error message)
     }
   };
 
@@ -74,16 +81,15 @@ export default function EventPage({ params: { eventId } }: Params) {
         body: JSON.stringify({ ...applicationData, eventId }),
       });
 
-      console.log(applicationData, eventId);
-
       if (!response.ok) {
-        throw new Error(`Error: ${response.statusText}`);
+        setError(`Error: ${response.statusText}`);
       }
 
       const result = await response.json();
       console.log("Application submitted successfully", result);
       // Handle success (e.g., show a success message or redirect)
     } catch (error) {
+      setError(`Error: ${error}`);
       console.error("Failed to submit application:", error);
       // Handle errors (e.g., show an error message)
     }
@@ -91,6 +97,10 @@ export default function EventPage({ params: { eventId } }: Params) {
 
   if (status === "loading") {
     return <div className={title()}>Loading...</div>;
+  }
+
+  if (error) {
+    throw new Error(error);
   }
 
   const isEventClosed = event?.status === "closed";

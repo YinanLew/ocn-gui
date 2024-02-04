@@ -62,7 +62,7 @@ export default function EditEventPage({ params: { eventId } }: Params) {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log(session);
+    // console.log(session);
 
     if (!token) {
       // console.log("edit@@@");
