@@ -21,8 +21,8 @@ export interface Event extends EventFormData {
 }
 
 export interface Application {
-  eventId: string;
-  eventTitle: string;
+  eventId?: string;
+  eventTitle?: string;
   firstName: string;
   lastName: string;
   address: string;
@@ -30,12 +30,13 @@ export interface Application {
   email: string;
   spokenLanguage: string;
   writtenLanguage: string;
-  status: string;
-  createdAt: string;
-  updatedAt: string;
+  status?: string;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export interface ApplicationFormData extends Application {
+  title?: string;
   volunteerExperience: string;
   referralSource?: string;
   referralContactPhoneNumber?: string;
@@ -46,6 +47,7 @@ export interface ApplicationFormData extends Application {
 export type Params = {
   params: {
     eventId: string;
+    eventUniqueId: string;
   };
 };
 

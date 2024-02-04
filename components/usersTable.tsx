@@ -187,13 +187,6 @@ export default function UsersTableTemp({ applications }: UsersTableTempProps) {
   function getDropdownItems(application: FlattenedApplication) {
     // Always include these items
     const items = [
-      <DropdownItem
-        key="view"
-        as="a"
-        href={`/applications/${application.eventId}`}
-      >
-        View
-      </DropdownItem>,
       // <DropdownItem key="apply" as="a" href={`/application/${application.eventId}`}>
       //   Apply
       // </DropdownItem>,
@@ -205,7 +198,7 @@ export default function UsersTableTemp({ applications }: UsersTableTempProps) {
         <DropdownItem
           key="edit"
           as="a"
-          href={`/applications/${application.eventId}/edit`}
+          href={`/applications/${application.eventUniqueId}/edit`}
         >
           Edit
         </DropdownItem>,
@@ -244,13 +237,6 @@ export default function UsersTableTemp({ applications }: UsersTableTempProps) {
               {formatDate(application.createdAt)}
             </div>
           );
-        // case "applicationCount":
-        //   // Render the applicationCount with a Link
-        //   return (
-        //     <Link href={`/applications/${application.eventId}`} color="primary">
-        //       {cellValue.toString()}
-        //     </Link>
-        //   );
         case "status":
           return (
             <Chip
