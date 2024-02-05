@@ -14,8 +14,6 @@ export default function EditApplicationPage({ params: { eventId } }: Params) {
   const router = useRouter();
   const [error, setError] = useState("");
 
-  console.log(eventId);
-
   // Initialize form data with application-specific fields
   const [formData, setFormData] = useState<ApplicationFormData>({
     firstName: "",
@@ -33,6 +31,8 @@ export default function EditApplicationPage({ params: { eventId } }: Params) {
     status: "",
     title: "",
   });
+
+  console.log(formData);
 
   useEffect(() => {
     async function fetchData() {
@@ -94,6 +94,8 @@ export default function EditApplicationPage({ params: { eventId } }: Params) {
   if (error) {
     throw new Error(error);
   }
+
+  console.log(eventId);
 
   return (
     <>
@@ -162,7 +164,7 @@ export default function EditApplicationPage({ params: { eventId } }: Params) {
           labelPlacement="outside"
           placeholder="Phone"
           className="max-w-xs"
-          name="phone"
+          name="phoneNumber"
           value={formData.phoneNumber}
           onChange={handleChange}
         />
