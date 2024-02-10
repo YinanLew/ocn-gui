@@ -238,9 +238,15 @@ export default function TableTemp() {
         case "applicationCount":
           // Render the applicationCount with a Link
           return (
-            <Link href={`/applications/${event._id}`} color="primary">
-              {cellValue.toString()}
-            </Link>
+            <>
+              {session && session.user.role === "admin" ? (
+                <Link href={`/applications/${event._id}`} color="primary">
+                  {cellValue.toString()}
+                </Link>
+              ) : (
+                <div>{cellValue.toString()}</div>
+              )}
+            </>
           );
         case "status":
           return (

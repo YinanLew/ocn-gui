@@ -1,6 +1,11 @@
-export const getAllApplications = async () => {
+export const getAllApplications = async (token: string): Promise<any> => {
   try {
-    const res = await fetch(`http://localhost:8500/application/`);
+    const res = await fetch(`http://localhost:8500/application/`, {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
     if (!res.ok) throw new Error("Failed to fetch events");
     return res.json();
   } catch (error) {
@@ -8,3 +13,4 @@ export const getAllApplications = async () => {
     throw error;
   }
 };
+

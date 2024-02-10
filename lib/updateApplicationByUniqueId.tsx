@@ -2,7 +2,7 @@ import { ApplicationFormData } from "@/types";
 export const updateApplicationByUniqueId = async (
   eventUniqueId: string,
   eventData: ApplicationFormData,
-  token: string
+  token: string | undefined
 ) => {
   const response = await fetch(
     `http://localhost:8500/application/edit/${eventUniqueId}`,

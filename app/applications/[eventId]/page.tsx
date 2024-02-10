@@ -11,28 +11,40 @@ import { flattenApplicationsForTable } from "@/utils/flattenApplicationsForTable
 export default function EventPage({ params: { eventId } }: Params) {
   const [applications, setApplications] = useState<FlattenedApplication[]>([]);
   const { data: session, status } = useSession();
+  const token = session?.user.token;
   const [error, setError] = useState("");
+  // const [authError, setAuthError] = useState("");
 
   useEffect(() => {
     async function fetchData() {
-      try {
-        const fetchedData = await getApplicationsById(eventId);
-        const flattenedData = await flattenApplicationsForTable(fetchedData);
-        setApplications(flattenedData);
-      } catch (error) {
-        if (error instanceof Error) {
-          // Safe to access error.message here
-          console.error("Error fetching events:", error.message);
-          setError(error.message);
-        } else {
-          // Handle non-Error objects or generic errors
-          console.error("An unexpected error occurred");
-          setError("An unexpected error occurred");
+      // Check both token and eventId are defined and session status is not loading
+      if (status !== "loading" && !session) {
+        // If the session has loaded but no session is found, prompt the user to log in
+        setError("Authentication required.");
+        // Optionally redirect to sign-in page or display a login prompt
+        // signIn(); // Uncomment to redirect to sign-in
+      } else if (token && eventId) {
+        try {
+          const fetchedData = await getApplicationsById(eventId, token);
+          const flattenedData = await flattenApplicationsForTable(fetchedData);
+          setApplications(flattenedData);
+        } catch (error) {
+          if (error instanceof Error) {
+            console.error("Error fetching events:", error.message);
+            setError(error.message);
+          } else {
+            console.error("An unexpected error occurred");
+            setError("An unexpected error occurred");
+          }
         }
       }
     }
     fetchData();
-  }, [eventId]);
+  }, [eventId, token, status]);
+
+  // if (authError) {
+  //   throw new AuthRequiredError();
+  // }
 
   if (error) {
     throw new Error(error);
@@ -46,7 +58,11 @@ export default function EventPage({ params: { eventId } }: Params) {
 
   return (
     <div>
-      <h1 className={title()}>{applications.length > 0 ? applications[0].eventTitle + " Applications" : "Loading Applications..."}</h1>
+      <h1 className={title()}>
+        {applications.length > 0
+          ? `${applications[0].eventTitle} Applications`
+          : "No Applications"}
+      </h1>
       <UsersTableTemp applications={applications} />
     </div>
   );

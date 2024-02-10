@@ -47,7 +47,7 @@ export interface ApplicationFormData extends Application {
 export type Params = {
   params: {
     eventId: string;
-    eventUniqueId: string;
+    uniqueId: string;
   };
 };
 

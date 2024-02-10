@@ -9,6 +9,10 @@ export const siteConfig = {
       href: "/events",
     },
     {
+      label: "Applications",
+      href: "/applications",
+    },
+    {
       label: "Users",
       href: "/users",
     },
@@ -17,6 +21,10 @@ export const siteConfig = {
     {
       label: "Events",
       href: "/events",
+    },
+    {
+      label: "Applications",
+      href: "/applications",
     },
     {
       label: "Users",

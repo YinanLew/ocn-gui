@@ -6,23 +6,40 @@ import UsersTableTemp from "@/components/usersTable";
 import { getAllApplications } from "@/lib/getAllApplications";
 import { FlattenedApplication, Params } from "@/types";
 import { flattenApplicationsForTable } from "@/utils/flattenApplicationsForTable";
+import { AuthRequiredError } from "@/lib/exceptions";
 
 export default function ApplicationsPage({ params: { eventId } }: Params) {
   const [applications, setApplications] = useState<FlattenedApplication[]>([]);
   const { data: session, status } = useSession();
+  const token = session?.user.token;
+  const [error, setError] = useState("");
+
   useEffect(() => {
     async function fetchData() {
-      try {
-        const fetchedData = await getAllApplications();
-        const flattenedData = flattenApplicationsForTable(fetchedData);
-        setApplications(flattenedData);
-      } catch (error) {
-        console.error("Error fetching events:", error);
+      if (status !== "loading" && !session) {
+        setError("Authentication required.");
+        // Optionally, signIn() or show a message prompting the user to log in
+      } else if (token) {
+        try {
+          const fetchedData = await getAllApplications(token);
+          const flattenedData = flattenApplicationsForTable(fetchedData);
+          setApplications(flattenedData);
+        } catch (error) {
+          console.error("Error fetching applications:", error);
+          setError("Failed to fetch applications");
+        }
       }
     }
     fetchData();
-  }, [eventId]);
+  }, [token, status]);
 
+  if (status === "loading") {
+    return <div className={title()}>Loading...</div>;
+  }
+
+  if (error) {
+    throw new AuthRequiredError();
+  }
 
   return (
     <div>

@@ -1,8 +1,17 @@
-export const getApplicationByUniqueId = async (eventUniqueId: string) => {
+export const getApplicationByUniqueId = async (
+  eventUniqueId: string,
+  token: string
+): Promise<any> => {
   try {
     const res = await fetch(
-      `http://localhost:8500/application/event-sub/${eventUniqueId}`
-    ); // Replace with your actual API endpoint
+      `http://localhost:8500/application/event-sub/${eventUniqueId}`,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
     if (!res.ok) throw new Error("Failed to fetch events");
     return res.json();
   } catch (error) {

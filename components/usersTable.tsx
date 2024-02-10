@@ -198,7 +198,7 @@ export default function UsersTableTemp({ applications }: UsersTableTempProps) {
         <DropdownItem
           key="edit"
           as="a"
-          href={`/applications/${application.eventUniqueId}/edit`}
+          href={`/applications/${application.eventId}/${application.eventUniqueId}/edit`}
         >
           Edit
         </DropdownItem>,
