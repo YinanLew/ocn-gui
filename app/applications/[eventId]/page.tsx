@@ -1,7 +1,7 @@
 "use client";
 import { title } from "@/components/primitives";
 import { useEffect, useState } from "react";
-import { useSession } from "next-auth/react";
+import { useSession, signOut } from "next-auth/react";
 import { AuthRequiredError } from "@/lib/exceptions";
 import { getApplicationsById } from "@/lib/getApplicationsById";
 import UsersTableTemp from "@/components/usersTable";
@@ -17,26 +17,24 @@ export default function EventPage({ params: { eventId } }: Params) {
 
   useEffect(() => {
     async function fetchData() {
-      // Check both token and eventId are defined and session status is not loading
-      if (status !== "loading" && !session) {
-        // If the session has loaded but no session is found, prompt the user to log in
-        setError("Authentication required.");
-        // Optionally redirect to sign-in page or display a login prompt
-        // signIn(); // Uncomment to redirect to sign-in
-      } else if (token && eventId) {
+      if (status === "authenticated" && token && eventId) {
         try {
           const fetchedData = await getApplicationsById(eventId, token);
           const flattenedData = await flattenApplicationsForTable(fetchedData);
           setApplications(flattenedData);
-        } catch (error) {
-          if (error instanceof Error) {
-            console.error("Error fetching events:", error.message);
-            setError(error.message);
+        } catch (error: any) {
+          if (error.message === "Token expired") {
+            signOut({ redirect: false });
+            setError("Your session has expired. Please log in again.");
+          } else if (error.message === "Not Admin") {
+            setError("Access denied: Not an admin.");
           } else {
-            console.error("An unexpected error occurred");
-            setError("An unexpected error occurred");
+            console.error("Error fetching events:", error.message);
+            setError("Failed to fetch events");
           }
         }
+      } else if (status === "unauthenticated") {
+        setError("Authentication required.");
       }
     }
     fetchData();

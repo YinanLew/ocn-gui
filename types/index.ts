@@ -82,3 +82,15 @@ export interface FlattenedApplication
 export interface UsersTableTempProps {
   applications: FlattenedApplication[];
 }
+
+export interface EventWorkingHours {
+  _id: string;
+  eventTitle: string;
+  totalHours: number;
+  status: string;
+  appCreatedAt: string;
+}
+
+export interface MyAppsTableProps {
+  apps: EventWorkingHours[];
+}

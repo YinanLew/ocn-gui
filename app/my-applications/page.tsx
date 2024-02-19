@@ -2,32 +2,29 @@
 import { useEffect, useState } from "react";
 import { useSession, signOut } from "next-auth/react";
 import { title } from "@/components/primitives";
-import UsersTableTemp from "@/components/usersTable";
-import { getAllApplications } from "@/lib/getAllApplications";
-import { FlattenedApplication, Params } from "@/types";
-import { flattenApplicationsForTable } from "@/utils/flattenApplicationsForTable";
 import { AuthRequiredError } from "@/lib/exceptions";
-
-export default function ApplicationsPage({ params: { eventId } }: Params) {
-  const [applications, setApplications] = useState<FlattenedApplication[]>([]);
+import { getUserApplications } from "@/lib/getUserApplications";
+import { EventWorkingHours } from "@/types";
+import MyAppsTable from "@/components/myAppsTable";
+export default function MyApplicationsPage() {
   const { data: session, status } = useSession();
   const token = session?.user.token;
   const [error, setError] = useState("");
+  const [eventsWorkingHours, setEventsWorkingHours] = useState<
+    EventWorkingHours[]
+  >([]);
 
   useEffect(() => {
     async function fetchData() {
       if (status === "authenticated" && token) {
         try {
-          const fetchedData = await getAllApplications(token);
-          const flattenedData = flattenApplicationsForTable(fetchedData);
-          setApplications(flattenedData);
+          const fetchedData = await getUserApplications(token);
+          setEventsWorkingHours(fetchedData.data);
         } catch (error: any) {
           console.error("Error fetching applications:", error.message);
           if (error.message === "Token expired") {
             signOut({ redirect: false });
             setError("Your session has expired. Please log in again.");
-          } else if (error.message === "Not Admin") {
-            setError("Access denied: Not an admin.");
           } else {
             setError("Failed to fetch applications");
           }
@@ -45,13 +42,13 @@ export default function ApplicationsPage({ params: { eventId } }: Params) {
   }
 
   if (error) {
-    throw new Error(error);
+    throw new AuthRequiredError();
   }
 
   return (
     <div>
       <h1 className={title()}>
-        <UsersTableTemp applications={applications} />
+        <MyAppsTable apps={eventsWorkingHours} />
       </h1>
     </div>
   );

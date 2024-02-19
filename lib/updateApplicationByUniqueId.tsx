@@ -4,7 +4,7 @@ export const updateApplicationByUniqueId = async (
   eventData: ApplicationFormData,
   token: string | undefined
 ) => {
-  const response = await fetch(
+  const res = await fetch(
     `http://localhost:8500/application/edit/${eventUniqueId}`,
     {
       method: "PUT",
@@ -15,11 +15,15 @@ export const updateApplicationByUniqueId = async (
       body: JSON.stringify(eventData),
     }
   );
+  if (res.status === 401) {
+    // Handle token expiration or unauthorized access specifically
+    throw new Error("Token expired");
+  }
 
-  if (!response.ok) {
-    const errorData = await response.json();
+  if (!res.ok) {
+    const errorData = await res.json();
     throw new Error(errorData.error || "Failed to update the event");
   }
 
-  return response.json();
+  return res.json();
 };

@@ -18,9 +18,6 @@ export const options: NextAuthOptions = {
         },
       },
       async authorize(credentials) {
-        // This is where you need to retrieve user data
-        // to verify with credentials
-        // Docs: https://next-auth.js.org/configuration/providers/credentials
         const res = await fetch("http://localhost:8500/users/login", {
           method: "POST",
           body: JSON.stringify(credentials),

@@ -2,17 +2,20 @@
 import { title } from "@/components/primitives";
 import { getEvent } from "@/lib/getEvent";
 import { useEffect, useState } from "react";
-import { useSession } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
 import { ApplicationFormData, Event, Params } from "@/types";
 import { Button } from "@nextui-org/react";
 import { formatDate } from "@/utils/formatDate";
 import ApplicationForm from "@/components/applicationForm";
+import { useRouter } from "next/navigation";
 import { AuthRequiredError } from "@/lib/exceptions";
+import { submitApplication } from "@/lib/submitApplication";
 
 export default function EventPage({ params: { eventId } }: Params) {
   const [event, setEvent] = useState<Event>();
   const { data: session, status } = useSession();
   const [error, setError] = useState<string>();
+  const router = useRouter();
 
   useEffect(() => {
     async function fetchData() {
@@ -38,33 +41,22 @@ export default function EventPage({ params: { eventId } }: Params) {
     };
 
     try {
-      const response = await fetch("http://localhost:8500/application/submit", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${session.user.token}`,
-        },
-        body: JSON.stringify(applicationData),
-      });
-
-      if (!response.ok) {
-        const errorResponse = await response.json();
-        setError(`Error: ${errorResponse.error}`);
-        return;
-      }
-
-      const result = await response.json();
-      console.log("Application submitted successfully", result);
+      await submitApplication(applicationData, session.user.token);
+      router.push("/events");
     } catch (error) {
-      // Here, we handle network errors or other unexpected errors
-      if (error instanceof Error) {
-        setError(`Error: ${error.message}`);
-        console.error("Failed to submit application:", error);
+      console.error("Error submitting application:", error);
+      if (error instanceof Error && error.message === "Token expired") {
+        // Handle token expiration
+        signOut({ redirect: false });
+        setError("Your session has expired. Please log in again.");
       } else {
-        setError("Error: An unexpected error occurred");
-        console.error("Failed to submit application:", error);
+        // Handle other errors
+        setError(
+          error instanceof Error
+            ? error.message
+            : "An unexpected error occurred"
+        );
       }
-      // Handle errors (e.g., show an error message)
     }
   };
 
@@ -73,25 +65,14 @@ export default function EventPage({ params: { eventId } }: Params) {
     applicationData: ApplicationFormData
   ) => {
     try {
-      const response = await fetch("http://localhost:8500/application/submit", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ ...applicationData, eventId }),
-      });
-
-      if (!response.ok) {
-        setError(`Error: ${response.statusText}`);
-      }
-
-      const result = await response.json();
-      console.log("Application submitted successfully", result);
-      // Handle success (e.g., show a success message or redirect)
+      await submitApplication({ ...applicationData, eventId });
+      router.push("/events");
     } catch (error) {
-      setError(`Error: ${error}`);
-      console.error("Failed to submit application:", error);
-      // Handle errors (e.g., show an error message)
+      if (error instanceof Error) {
+        setError(`Error: ${error.message}`);
+      } else {
+        setError("An unexpected error occurred during application submission.");
+      }
     }
   };
 

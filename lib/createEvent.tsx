@@ -9,6 +9,11 @@ export const createEvent = async (formData: any, token: string) => {
       body: JSON.stringify(formData),
     });
 
+    if (response.status === 401) {
+      // Handle token expiration or unauthorized access specifically
+      throw new Error("Token expired");
+    }
+
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }

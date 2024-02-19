@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { useSession } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
 import { title } from "@/components/primitives";
 import { Input, Select, SelectItem, Textarea, Button } from "@nextui-org/react";
 import { ApplicationFormData, Params } from "@/types";
@@ -49,20 +49,19 @@ export default function EditApplicationPage({
             ...applicationData,
             // Additional processing if needed
           });
-        } catch (error) {
-          console.error("Error fetching application:", error);
-          setError(
-            `Error fetching application: ${
-              error instanceof Error
-                ? error.message
-                : "An unexpected error occurred"
-            }`
-          );
+        } catch (error: any) {
+          console.error("Error fetching applications:", error.message);
+          if (error.message === "Token expired") {
+            signOut({ redirect: false });
+            setError("Your session has expired. Please log in again.");
+          } else if (error.message === "Not Admin") {
+            setError("Access denied: Not an admin.");
+          } else {
+            setError("Failed to fetch applications");
+          }
         }
       } else if (status === "unauthenticated") {
-        // Redirect to sign-in or show a message prompting to log in
         setError("Authentication required.");
-        // signIn(); // Uncomment to redirect to the sign-in page
       }
     }
     fetchData();

@@ -4,7 +4,7 @@ export const updateEvent = async (
   eventData: EventFormData,
   token: string
 ) => {
-  const response = await fetch(`http://localhost:8500/events/edit/${eventId}`, {
+  const res = await fetch(`http://localhost:8500/events/edit/${eventId}`, {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",
@@ -12,11 +12,15 @@ export const updateEvent = async (
     },
     body: JSON.stringify(eventData),
   });
+  if (res.status === 401) {
+    // Handle token expiration or unauthorized access specifically
+    throw new Error("Token expired");
+  }
 
-  if (!response.ok) {
-    const errorData = await response.json();
+  if (!res.ok) {
+    const errorData = await res.json();
     throw new Error(errorData.error || "Failed to update the event");
   }
 
-  return response.json();
+  return res.json();
 };
