@@ -5,7 +5,7 @@ import { title } from "@/components/primitives";
 import { AuthRequiredError } from "@/lib/exceptions";
 import { getUserApplications } from "@/lib/getUserApplications";
 import { EventWorkingHours } from "@/types";
-import MyAppsTable from "@/components/myAppsTable";
+import AppsTable from "@/components/myAppsTable";
 export default function MyApplicationsPage() {
   const { data: session, status } = useSession();
   const token = session?.user.token;
@@ -48,7 +48,7 @@ export default function MyApplicationsPage() {
   return (
     <div>
       <h1 className={title()}>
-        <MyAppsTable apps={eventsWorkingHours} />
+        <AppsTable apps={eventsWorkingHours} />
       </h1>
     </div>
   );

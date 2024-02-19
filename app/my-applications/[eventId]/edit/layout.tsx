@@ -1,4 +1,4 @@
-export default function EditEditEventLayout({
+export default function EditWorkingEntryLayout({
   children,
 }: {
   children: React.ReactNode;

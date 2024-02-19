@@ -91,6 +91,20 @@ export interface EventWorkingHours {
   appCreatedAt: string;
 }
 
-export interface MyAppsTableProps {
+export interface AppsTableProps {
   apps: EventWorkingHours[];
+}
+
+export interface EventEntry {
+  _id: string;
+  eventId: string;
+  eventTitle: string;
+  startTime: string;
+  endTime: string;
+  hours: number;
+  status: string;
+}
+
+export interface WorkingHoursTableProps {
+  apps: EventEntry[];
 }

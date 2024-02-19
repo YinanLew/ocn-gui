@@ -1,4 +1,4 @@
-export default function AddEventLayout({
+export default function AddHoursLayout({
   children,
 }: {
   children: React.ReactNode;

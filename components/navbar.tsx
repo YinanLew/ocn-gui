@@ -18,6 +18,7 @@ import {
 } from "@nextui-org/navbar";
 import { Link } from "@nextui-org/link";
 import { Logo } from "@/components/icons";
+import { formatName } from "@/utils/formatName";
 
 type UserControlsProps = {
   session: Session | null;
@@ -29,7 +30,7 @@ const UserAuth: React.FC<UserControlsProps> = ({ session }) => {
       {session ? (
         <>
           <NavbarItem>
-            <p>{session.user.userInfo?.firstName}</p>
+            <p>{formatName(session.user.userInfo?.firstName)}</p>
           </NavbarItem>
           <NavbarItem>
             <button onClick={() => signOut()}>Sign Out</button>

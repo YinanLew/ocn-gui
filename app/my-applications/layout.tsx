@@ -1,4 +1,4 @@
-export default function MyApplicationsPage({
+export default function MyApplicationsLayout({
   children,
 }: {
   children: React.ReactNode;

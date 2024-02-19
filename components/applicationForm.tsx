@@ -23,10 +23,57 @@ const ApplicationForm: React.FC<Props> = ({ eventId, onSubmit }) => {
     motivationToVolunteer: "",
   });
 
+  const [formErrors, setFormErrors] = useState({
+    email: "",
+    phoneNumber: "",
+    referralContactPhoneNumber: "",
+    firstName: "",
+    lastName: "",
+    address: "",
+    spokenLanguage: "",
+    writtenLanguage: "",
+    volunteerExperience: "",
+  });
+
+  const validateInput = (name: string, value: string) => {
+    const emailRegex = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i;
+    const phoneNumberRegex = /^\d{10,}$/;
+    const requiredFields = [
+      "firstName",
+      "lastName",
+      "address",
+      "spokenLanguage",
+      "writtenLanguage",
+      "volunteerExperience",
+    ];
+    if (requiredFields.includes(name) && !value.trim()) {
+      return "This field cannot be empty";
+    }
+    switch (name) {
+      case "email":
+        return emailRegex.test(value) ? "" : "Please enter a valid email";
+      case "phoneNumber":
+        return phoneNumberRegex.test(value)
+          ? ""
+          : "Please enter a minimum 10 numbers phone number";
+      case "referralContactPhoneNumber":
+        return phoneNumberRegex.test(value)
+          ? ""
+          : "Please enter a minimum 10 numbers phone number";
+      default:
+        return "";
+    }
+  };
+
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    const updatedValue = name === "email" ? value.toLowerCase() : value;
+    const errorMessage = validateInput(name, updatedValue);
+
+    setFormData({ ...formData, [name]: updatedValue });
+    setFormErrors({ ...formErrors, [name]: errorMessage });
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -50,6 +97,8 @@ const ApplicationForm: React.FC<Props> = ({ eventId, onSubmit }) => {
           name="firstName"
           value={formData.firstName}
           onChange={handleChange}
+          isInvalid={!!formErrors.firstName}
+          errorMessage={formErrors.firstName}
         />
 
         <Input
@@ -62,6 +111,8 @@ const ApplicationForm: React.FC<Props> = ({ eventId, onSubmit }) => {
           name="lastName"
           value={formData.lastName}
           onChange={handleChange}
+          isInvalid={!!formErrors.lastName}
+          errorMessage={formErrors.lastName}
         />
 
         <Input
@@ -74,6 +125,8 @@ const ApplicationForm: React.FC<Props> = ({ eventId, onSubmit }) => {
           name="address"
           value={formData.address}
           onChange={handleChange}
+          isInvalid={!!formErrors.address}
+          errorMessage={formErrors.address}
         />
       </div>
       <div className="w-full flex flex-col sm:flex-row justify-between items-center">
@@ -87,6 +140,8 @@ const ApplicationForm: React.FC<Props> = ({ eventId, onSubmit }) => {
           name="email"
           value={formData.email}
           onChange={handleChange}
+          isInvalid={!!formErrors.email}
+          errorMessage={formErrors.email}
         />
 
         <Input
@@ -99,6 +154,8 @@ const ApplicationForm: React.FC<Props> = ({ eventId, onSubmit }) => {
           name="phoneNumber"
           value={formData.phoneNumber}
           onChange={handleChange}
+          isInvalid={!!formErrors.phoneNumber}
+          errorMessage={formErrors.phoneNumber}
         />
 
         <Input
@@ -111,6 +168,8 @@ const ApplicationForm: React.FC<Props> = ({ eventId, onSubmit }) => {
           name="spokenLanguage"
           value={formData.spokenLanguage}
           onChange={handleChange}
+          isInvalid={!!formErrors.spokenLanguage}
+          errorMessage={formErrors.spokenLanguage}
         />
       </div>
       <div className="w-full flex flex-col sm:flex-row justify-between items-center">
@@ -124,6 +183,8 @@ const ApplicationForm: React.FC<Props> = ({ eventId, onSubmit }) => {
           name="writtenLanguage"
           value={formData.writtenLanguage}
           onChange={handleChange}
+          isInvalid={!!formErrors.writtenLanguage}
+          errorMessage={formErrors.writtenLanguage}
         />
 
         <Input
@@ -146,6 +207,8 @@ const ApplicationForm: React.FC<Props> = ({ eventId, onSubmit }) => {
           name="referralContactPhoneNumber"
           value={formData.referralContactPhoneNumber}
           onChange={handleChange}
+          isInvalid={!!formErrors.referralContactPhoneNumber}
+          errorMessage={formErrors.referralContactPhoneNumber}
         />
       </div>
       <Textarea
@@ -157,6 +220,8 @@ const ApplicationForm: React.FC<Props> = ({ eventId, onSubmit }) => {
         name="volunteerExperience"
         value={formData.volunteerExperience}
         onChange={handleChange}
+        isInvalid={!!formErrors.volunteerExperience}
+        errorMessage={formErrors.volunteerExperience}
       />
 
       <Textarea
