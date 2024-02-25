@@ -22,21 +22,22 @@ import {
   ChipProps,
 } from "@nextui-org/react";
 import { EventEntry, WorkingHoursTableProps } from "@/types";
-// import { VerticalDotsIcon } from "./verticalDotsIcon";
 import { ChevronDownIcon } from "./chevronDownIcon";
 import { SearchIcon } from "./searchIcon";
 import { capitalize } from "./utils";
 import { useSession } from "next-auth/react";
-import { formatDate } from "@/utils/formatDate";
 import { PlusIcon } from "./plusIcon";
+import { VerticalDotsIcon } from "./verticalDotsIcon";
+import { formatDateTime } from "@/utils/formatDateTime";
 
 const columns = [
+  { name: "Username", uid: "userName", sortable: true },
   { name: "Event Title", uid: "eventTitle", sortable: true },
   { name: "Start At", uid: "startTime", sortable: true },
   { name: "End At", uid: "endTime", sortable: true },
   { name: "Hours", uid: "hours", sortable: true },
   { name: "Status", uid: "status", sortable: true },
-  // { name: "Actions", uid: "actions" },
+  { name: "Actions", uid: "actions" },
 ];
 
 const statusOptions = [
@@ -53,21 +54,23 @@ const statusColorMap: Record<string, ChipProps["color"]> = {
 };
 
 const INITIAL_VISIBLE_COLUMNS = [
+  "userName",
   "eventTitle",
   "startTime",
   "endTime",
   "hours",
   "status",
-  // "actions",
+  "actions",
 ];
 
 export default function WorkingHoursTable({
   apps,
   eventId,
 }: WorkingHoursTableProps) {
-  console.log("@@@@@", eventId);
+  console.log(apps);
 
   const { data: session, status } = useSession();
+  const role = session?.user.role;
   const [filterValue, setFilterValue] = useState("");
   const [selectedKeys, setSelectedKeys] = useState<Selection>(new Set([]));
   const [visibleColumns, setVisibleColumns] = useState<Selection>(
@@ -128,37 +131,34 @@ export default function WorkingHoursTable({
         const cmp = dateA < dateB ? -1 : dateA > dateB ? 1 : 0;
         return sortDescriptor.direction === "descending" ? -cmp : cmp;
       } else {
-        const first = a[sortDescriptor.column as keyof EventEntry];
-        const second = b[sortDescriptor.column as keyof EventEntry];
+        const first = a[sortDescriptor.column as keyof EventEntry] || "";
+        const second = b[sortDescriptor.column as keyof EventEntry] || "";
         const cmp = first < second ? -1 : first > second ? 1 : 0;
         return sortDescriptor.direction === "descending" ? -cmp : cmp;
       }
     });
   }, [sortDescriptor, items]);
 
-  // function getDropdownItems(app: EventEntry) {
-  //   const items = [];
+  function getDropdownItems(app: EventEntry) {
+    const items = [
+      <DropdownItem
+        className="text-center"
+        key="submit"
+        as="a"
+        href={`/working-hours/${app._id}`}
+      >
+        Edit
+      </DropdownItem>,
+      <DropdownItem className="text-center" key="pending">
+        Delete
+      </DropdownItem>,
+    ];
 
-  //   if (app.status === "pending") {
-  //     items.push(
-  //       <DropdownItem
-  //         className="text-center"
-  //         key="submit"
-  //         as="a"
-  //         href={`/my-applications/${app._id}/edit`}
-  //       >
-  //         Edit
-  //       </DropdownItem>
-  //     );
-  //   } else {
-  //     items.push(
-  //       <DropdownItem className="text-center" key="pending">
-  //         Done
-  //       </DropdownItem>
-  //     );
-  //   }
-  //   return items;
-  // }
+    if (role === "admin") {
+      items.push();
+    }
+    return items;
+  }
 
   const renderCell = React.useCallback(
     (app: EventEntry, columnKey: React.Key) => {
@@ -169,10 +169,12 @@ export default function WorkingHoursTable({
           return <p>{app.eventTitle}</p>;
         case "startTime":
           return (
-            <div className="flex flex-col">{formatDate(app.startTime)}</div>
+            <div className="flex flex-col">{formatDateTime(app.startTime)}</div>
           );
         case "endTime":
-          return <div className="flex flex-col">{formatDate(app.endTime)}</div>;
+          return (
+            <div className="flex flex-col">{formatDateTime(app.endTime)}</div>
+          );
         case "hours":
           return <div className="flex flex-col">{app.hours}</div>;
         case "status":
@@ -186,26 +188,26 @@ export default function WorkingHoursTable({
               {cellValue}
             </Chip>
           );
-        // case "actions":
-        //   return (
-        //     <div className="relative flex justify-center items-center gap-2">
-        //       <Dropdown>
-        //         <DropdownTrigger>
-        //           <Button
-        //             aria-label="Actions"
-        //             isIconOnly
-        //             size="sm"
-        //             variant="light"
-        //           >
-        //             <VerticalDotsIcon className="text-default-300" />
-        //           </Button>
-        //         </DropdownTrigger>
-        //         <DropdownMenu aria-label="Action Items" items={apps}>
-        //           {getDropdownItems(app)}
-        //         </DropdownMenu>
-        //       </Dropdown>
-        //     </div>
-        //   );
+        case "actions":
+          return (
+            <div className="relative flex justify-center items-center gap-2">
+              <Dropdown>
+                <DropdownTrigger>
+                  <Button
+                    aria-label="Actions"
+                    isIconOnly
+                    size="sm"
+                    variant="light"
+                  >
+                    <VerticalDotsIcon className="text-default-300" />
+                  </Button>
+                </DropdownTrigger>
+                <DropdownMenu aria-label="Action Items" items={apps}>
+                  {getDropdownItems(app)}
+                </DropdownMenu>
+              </Dropdown>
+            </div>
+          );
         default:
           return cellValue;
       }
@@ -313,15 +315,17 @@ export default function WorkingHoursTable({
                 ))}
               </DropdownMenu>
             </Dropdown>
-            <Button
-              as={"a"}
-              href={`/my-applications/${eventId}/add-entry`}
-              color="primary"
-              endContent={<PlusIcon />}
-              disabled={apps.length === 0}
-            >
-              Add Hours
-            </Button>
+            {role === "user" && (
+              <Button
+                as={"a"}
+                href={`/my-applications/${eventId}/add-entry`}
+                color="primary"
+                endContent={<PlusIcon />}
+                disabled={apps.length === 0}
+              >
+                Add Hours
+              </Button>
+            )}
           </div>
         </div>
         <div className="flex justify-between items-center">

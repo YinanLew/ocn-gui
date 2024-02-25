@@ -97,12 +97,13 @@ export interface AppsTableProps {
 
 export interface EventEntry {
   _id: string;
-  eventId: string;
+  eventId?: string;
   eventTitle: string;
   startTime: string;
   endTime: string;
   hours: number;
   status: string;
+  userName?: string;
 }
 
 export interface WorkingHoursTableProps {

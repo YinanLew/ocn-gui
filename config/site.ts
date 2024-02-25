@@ -17,8 +17,8 @@ export const siteConfig = {
       href: "/applications",
     },
     {
-      label: "Users",
-      href: "/users",
+      label: "Working Hours",
+      href: "/working-hours",
     },
   ],
   navMenuItems: [
@@ -35,8 +35,8 @@ export const siteConfig = {
       href: "/applications",
     },
     {
-      label: "Users",
-      href: "/users",
+      label: "Working Hours",
+      href: "/working-hours",
     },
   ],
   links: {

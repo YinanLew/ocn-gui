@@ -1,23 +1,27 @@
 "use client";
-import { useEffect, useState } from "react";
-import { useSession, signOut } from "next-auth/react";
-import { EventEntry } from "@/types";
 import { title } from "@/components/primitives";
-import { getAllUsersWorkingEntries } from "@/lib/getAllUsersWorkingEntries";
+import { useEffect, useState } from "react";
+import { signOut, useSession } from "next-auth/react";
+import { EventEntry, Params } from "@/types";
 import WorkingHoursTable from "@/components/workingHoursTable";
+import { useRouter } from "next/navigation";
+import { getAllWorkingEntriesById } from "@/lib/getAllWorkingEntriesById";
 
-export default function WorkingHoursPage() {
-  const [allEventEntries, setAllEventEntries] = useState<EventEntry[]>([]);
+export default function WorkingHoursSubmitPage({
+  params: { eventId },
+}: Params) {
+  const [eventEntries, setEventEntries] = useState<EventEntry[]>([]);
   const { data: session, status } = useSession();
   const token = session?.user.token;
-  const [error, setError] = useState("");
+  const [error, setError] = useState<string>();
+  const router = useRouter();
 
   useEffect(() => {
     async function fetchData() {
-      if (status === "authenticated" && token) {
+      if (status === "authenticated" && token && eventId) {
         try {
-          const fetchedData = await getAllUsersWorkingEntries(token);
-          setAllEventEntries(fetchedData.data);
+          const fetchedData = await getAllWorkingEntriesById(token, eventId);
+          setEventEntries(fetchedData.apps);
         } catch (error: any) {
           console.error("Error fetching applications:", error.message);
           if (error.message === "Token expired") {
@@ -30,7 +34,6 @@ export default function WorkingHoursPage() {
           }
         }
       } else if (status === "unauthenticated") {
-        // If the session status is unauthenticated, set an error prompting to authenticate.
         setError("Authentication required.");
       }
     }
@@ -45,10 +48,11 @@ export default function WorkingHoursPage() {
     throw new Error(error);
   }
 
+  console.log(eventId);
+
   return (
     <div>
-      <h1 className={title()}>Working Hours</h1>
-      <WorkingHoursTable apps={allEventEntries} eventId={""} />
+      <WorkingHoursTable apps={eventEntries} eventId={eventId} />
     </div>
   );
 }

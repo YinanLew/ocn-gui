@@ -1,4 +1,4 @@
-export default function WorkingHoursLayout({
+export default function AddHoursLayout({
   children,
 }: {
   children: React.ReactNode;
