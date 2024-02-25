@@ -1,4 +1,4 @@
-export const getAllWorkingEntries = async (
+export const getAllWorkingEntriesById = async (
   token: string,
   eventId: string
 ): Promise<any> => {

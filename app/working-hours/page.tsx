@@ -1,27 +1,21 @@
 "use client";
-import { title } from "@/components/primitives";
 import { useEffect, useState } from "react";
-import { signOut, useSession } from "next-auth/react";
-import { EventEntry, Params } from "@/types";
-import WorkingHoursTable from "@/components/workingHoursTable";
-import { useRouter } from "next/navigation";
-import { getAllWorkingEntriesById } from "@/lib/getAllWorkingEntriesById";
+import { useSession, signOut } from "next-auth/react";
+import { title } from "@/components/primitives";
+import { getAllUsersWorkingEntries } from "@/lib/getAllUsersWorkingEntries";
 
-export default function WorkingHoursSubmitPage({
-  params: { eventId },
-}: Params) {
-  const [eventEntries, setEventEntries] = useState<EventEntry[]>([]);
+export default function WorkingHoursPage() {
+  const [allWorkingHours, setAllWorkingHours] = useState<[]>([]);
   const { data: session, status } = useSession();
   const token = session?.user.token;
-  const [error, setError] = useState<string>();
-  const router = useRouter();
+  const [error, setError] = useState("");
 
   useEffect(() => {
     async function fetchData() {
-      if (status === "authenticated" && token && eventId) {
+      if (status === "authenticated" && token) {
         try {
-          const fetchedData = await getAllWorkingEntriesById(token, eventId);
-          setEventEntries(fetchedData.apps);
+          const fetchedData = await getAllUsersWorkingEntries(token);
+          setAllWorkingHours(fetchedData);
         } catch (error: any) {
           console.error("Error fetching applications:", error.message);
           if (error.message === "Token expired") {
@@ -34,11 +28,14 @@ export default function WorkingHoursSubmitPage({
           }
         }
       } else if (status === "unauthenticated") {
+        // If the session status is unauthenticated, set an error prompting to authenticate.
         setError("Authentication required.");
       }
     }
     fetchData();
   }, [token, status]);
+
+  console.log(allWorkingHours);
 
   if (status === "loading") {
     return <div className={title()}>Loading...</div>;
@@ -48,11 +45,9 @@ export default function WorkingHoursSubmitPage({
     throw new Error(error);
   }
 
-  console.log(eventId);
-
   return (
     <div>
-      <WorkingHoursTable apps={eventEntries} eventId={eventId} />
+      <h1 className={title()}>Working Hours</h1>
     </div>
   );
 }

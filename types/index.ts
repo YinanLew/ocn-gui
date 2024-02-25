@@ -107,4 +107,5 @@ export interface EventEntry {
 
 export interface WorkingHoursTableProps {
   apps: EventEntry[];
+  eventId: string;
 }

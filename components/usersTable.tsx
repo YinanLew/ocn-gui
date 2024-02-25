@@ -375,7 +375,7 @@ export default function UsersTableTemp({ applications }: UsersTableTempProps) {
                 ))}
               </DropdownMenu>
             </Dropdown>
-            {session && session.user.role === "admin" && (
+            {/* {session && session.user.role === "admin" && (
               <Button
                 as={"a"}
                 href="/add-application"
@@ -384,7 +384,7 @@ export default function UsersTableTemp({ applications }: UsersTableTempProps) {
               >
                 Add New
               </Button>
-            )}
+            )} */}
           </div>
         </div>
         <div className="flex justify-between items-center">

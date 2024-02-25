@@ -61,7 +61,12 @@ const INITIAL_VISIBLE_COLUMNS = [
   // "actions",
 ];
 
-export default function WorkingHoursTable({ apps }: WorkingHoursTableProps) {
+export default function WorkingHoursTable({
+  apps,
+  eventId,
+}: WorkingHoursTableProps) {
+  console.log("@@@@@", eventId);
+
   const { data: session, status } = useSession();
   const [filterValue, setFilterValue] = useState("");
   const [selectedKeys, setSelectedKeys] = useState<Selection>(new Set([]));
@@ -310,11 +315,7 @@ export default function WorkingHoursTable({ apps }: WorkingHoursTableProps) {
             </Dropdown>
             <Button
               as={"a"}
-              href={
-                apps.length > 0
-                  ? `/my-applications/${apps[0].eventId}/add-entry`
-                  : "#"
-              }
+              href={`/my-applications/${eventId}/add-entry`}
               color="primary"
               endContent={<PlusIcon />}
               disabled={apps.length === 0}
