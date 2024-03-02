@@ -145,7 +145,7 @@ export default function WorkingHoursTable({
         className="text-center"
         key="submit"
         as="a"
-        href={`/working-hours/${app._id}`}
+        href={`/working-hours/${app._id}/edit`}
       >
         Edit
       </DropdownItem>,

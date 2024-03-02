@@ -47,9 +47,8 @@ export default function MyApplicationsPage() {
 
   return (
     <div>
-      <h1 className={title()}>
-        <AppsTable apps={eventsWorkingHours} />
-      </h1>
+      <h1 className={title()}>My Applications</h1>
+      <AppsTable apps={eventsWorkingHours} />
     </div>
   );
 }

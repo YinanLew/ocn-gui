@@ -101,7 +101,7 @@ export interface EventEntry {
   eventTitle: string;
   startTime: string;
   endTime: string;
-  hours: number;
+  hours: string;
   status: string;
   userName?: string;
 }

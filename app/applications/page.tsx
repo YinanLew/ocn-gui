@@ -50,9 +50,8 @@ export default function ApplicationsPage({ params: { eventId } }: Params) {
 
   return (
     <div>
-      <h1 className={title()}>
-        <UsersTableTemp applications={applications} />
-      </h1>
+      <h1 className={title()}>All Applications</h1>
+      <UsersTableTemp applications={applications} />
     </div>
   );
 }
