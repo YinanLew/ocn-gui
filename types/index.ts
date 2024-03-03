@@ -81,6 +81,7 @@ export interface FlattenedApplication
 
 export interface UsersTableTempProps {
   applications: FlattenedApplication[];
+  onRemoveApplication: (eventId: string) => void;
 }
 
 export interface EventWorkingHours {

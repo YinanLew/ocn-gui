@@ -74,7 +74,10 @@ const INITIAL_VISIBLE_COLUMNS = [
   "actions",
 ];
 
-export default function UsersTableTemp({ applications }: UsersTableTempProps) {
+export default function UsersTableTemp({
+  applications,
+  onRemoveApplication,
+}: UsersTableTempProps) {
   const { data: session, status } = useSession();
   // const [error, setError] = useState("");
 
@@ -161,7 +164,7 @@ export default function UsersTableTemp({ applications }: UsersTableTempProps) {
 
     try {
       const response = await fetch(
-        `http://localhost:8500/applications/delete/${eventId}`,
+        `http://localhost:8500/application/delete/${eventId}`,
         {
           method: "DELETE",
           headers: {
@@ -175,9 +178,7 @@ export default function UsersTableTemp({ applications }: UsersTableTempProps) {
         throw new Error("Failed to delete the application");
       }
 
-      const updatedApplications = applications.filter(
-        (application) => application.eventId !== eventId
-      );
+      onRemoveApplication(eventId);
     } catch (error) {
       console.error("Error deleting application:", error);
       // Handle error (e.g., show a notification to the user)

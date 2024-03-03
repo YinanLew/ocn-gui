@@ -40,6 +40,10 @@ export default function ApplicationsPage({ params: { eventId } }: Params) {
     fetchData();
   }, [token, status]);
 
+  const handleRemoveApplication = (eventId: string) => {
+    setApplications(applications.filter((app) => app.eventId !== eventId));
+  };
+
   if (status === "loading") {
     return <div className={title()}>Loading...</div>;
   }
@@ -51,7 +55,10 @@ export default function ApplicationsPage({ params: { eventId } }: Params) {
   return (
     <div>
       <h1 className={title()}>All Applications</h1>
-      <UsersTableTemp applications={applications} />
+      <UsersTableTemp
+        applications={applications}
+        onRemoveApplication={handleRemoveApplication}
+      />
     </div>
   );
 }
