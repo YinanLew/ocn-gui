@@ -111,3 +111,21 @@ export interface WorkingHoursTableProps {
   apps: EventEntry[];
   eventId: string;
 }
+
+export type SiteConfig = {
+  name: string;
+  description: string;
+  navItems: { label: string; href: string }[];
+  navMenuItems: { label: string; href: string }[];
+  links: {
+    github: string;
+    twitter: string;
+    docs: string;
+    discord: string;
+    sponsor: string;
+  };
+};
+
+export type Translations = {
+  [key: string]: string | SiteConfig;
+};
