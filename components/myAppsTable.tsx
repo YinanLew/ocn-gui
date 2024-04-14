@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Table,
   TableHeader,
@@ -21,58 +21,93 @@ import {
   Chip,
   ChipProps,
 } from "@nextui-org/react";
-import { AppsTableProps, EventWorkingHours } from "@/types";
+import { AppsTableProps, EventWorkingHours, TableColumnTy } from "@/types";
 import { VerticalDotsIcon } from "./verticalDotsIcon";
 import { ChevronDownIcon } from "./chevronDownIcon";
 import { SearchIcon } from "./searchIcon";
 import { capitalize } from "./utils";
 import { useSession } from "next-auth/react";
 import { formatDate } from "@/utils/formatDate";
-
-const columns = [
-  { name: "Event Title", uid: "eventTitle", sortable: true },
-  { name: "Total Hours", uid: "totalHours", sortable: true },
-  { name: "Created At", uid: "appCreatedAt", sortable: true },
-  { name: "Status", uid: "status", sortable: true },
-  {
-    name: "Certificate",
-    uid: "certificateStatus",
-    sortable: true,
-  },
-  { name: "Actions", uid: "actions" },
-];
-
-const statusOptions = [
-  { name: "Verified", uid: "verified" },
-  { name: "Paused", uid: "pending" },
-  { name: "Closed", uid: "rejected" },
-  { name: "Not Submitted", uid: "notSubmitted" },
-  { name: "Submitted", uid: "submitted" },
-  { name: "Approved", uid: "approved" },
-  { name: "Rejected", uid: "rejected" },
-  // Add other statuses as needed
-];
-
-const statusColorMap: Record<string, ChipProps["color"]> = {
-  verified: "success",
-  pending: "warning",
-  rejected: "danger",
-  notSubmitted: "default",
-  submitted: "warning",
-  approved: "success",
-};
-
-const INITIAL_VISIBLE_COLUMNS = [
-  "eventTitle",
-  "totalHours",
-  "appCreatedAt",
-  "status",
-  "certificateStatus",
-  "actions",
-];
+import { useLanguage } from "@/utils/languageContext";
 
 export default function AppsTable({ apps }: AppsTableProps) {
   const { data: session, status } = useSession();
+  const { translations } = useLanguage();
+
+  const [columns, setColumns] = useState<TableColumnTy[]>([
+    {
+      name: `${translations.strings.event}`,
+      uid: "eventTitle",
+      sortable: true,
+    },
+    {
+      name: `${translations.strings.totalWorkingHours}`,
+      uid: "totalHours",
+      sortable: true,
+    },
+    {
+      name: `${translations.strings.appCreatedAt}`,
+      uid: "appCreatedAt",
+      sortable: true,
+    },
+    { name: `${translations.strings.status}`, uid: "status", sortable: true },
+    { name: `${translations.strings.actions}`, uid: "actions", sortable: true },
+  ]);
+
+  useEffect(() => {
+    setColumns([
+      {
+        name: `${translations.strings.event}`,
+        uid: "eventTitle",
+        sortable: true,
+      },
+      {
+        name: `${translations.strings.totalWorkingHours}`,
+        uid: "totalHours",
+        sortable: true,
+      },
+      {
+        name: `${translations.strings.appCreatedAt}`,
+        uid: "appCreatedAt",
+        sortable: true,
+      },
+      { name: `${translations.strings.status}`, uid: "status", sortable: true },
+      {
+        name: `${translations.strings.actions}`,
+        uid: "actions",
+        sortable: true,
+      },
+    ]);
+  }, [translations]);
+
+  const statusOptions = [
+    { name: "Verified", uid: "verified" },
+    { name: "Paused", uid: "pending" },
+    { name: "Closed", uid: "rejected" },
+    { name: "Not Submitted", uid: "notSubmitted" },
+    { name: "Submitted", uid: "submitted" },
+    { name: "Approved", uid: "approved" },
+    { name: "Rejected", uid: "rejected" },
+    // Add other statuses as needed
+  ];
+
+  const statusColorMap: Record<string, ChipProps["color"]> = {
+    verified: "success",
+    pending: "warning",
+    rejected: "danger",
+    notSubmitted: "default",
+    submitted: "warning",
+    approved: "success",
+  };
+
+  const INITIAL_VISIBLE_COLUMNS = [
+    "eventTitle",
+    "totalHours",
+    "appCreatedAt",
+    "status",
+    "certificateStatus",
+    "actions",
+  ];
   const token = session?.user.token;
   const [filterValue, setFilterValue] = useState("");
   const [selectedKeys, setSelectedKeys] = useState<Selection>(new Set([]));
@@ -95,7 +130,7 @@ export default function AppsTable({ apps }: AppsTableProps) {
     return columns.filter((column) =>
       Array.from(visibleColumns).includes(column.uid)
     );
-  }, [visibleColumns]);
+  }, [columns, visibleColumns, translations]);
 
   const filteredItems = React.useMemo(() => {
     let filteredApps = [...apps];
@@ -321,7 +356,7 @@ export default function AppsTable({ apps }: AppsTableProps) {
                   endContent={<ChevronDownIcon className="text-small" />}
                   variant="flat"
                 >
-                  Status
+                  {translations.strings.status}
                 </Button>
               </DropdownTrigger>
               <DropdownMenu
@@ -345,7 +380,7 @@ export default function AppsTable({ apps }: AppsTableProps) {
                   endContent={<ChevronDownIcon className="text-small" />}
                   variant="flat"
                 >
-                  Columns
+                  {translations.strings.columns}
                 </Button>
               </DropdownTrigger>
               <DropdownMenu
@@ -367,10 +402,11 @@ export default function AppsTable({ apps }: AppsTableProps) {
         </div>
         <div className="flex justify-between items-center">
           <span className="text-default-400 text-small">
-            Total {apps.length} Applications
+            {translations.strings.total} {apps.length}{" "}
+            {translations.strings.event}
           </span>
           <Select
-            label="Rows per page:"
+            label={translations.strings.rpp}
             className="w-36 sm:max-w-xs"
             onChange={onRowsPerPageChange}
           >
@@ -396,15 +432,16 @@ export default function AppsTable({ apps }: AppsTableProps) {
     apps.length,
     hasSearchFilter,
     session,
+    columns,
   ]);
 
   const bottomContent = React.useMemo(() => {
     return (
       <div className="py-2 px-2 flex justify-between items-center">
         <span className="w-[30%] text-small text-default-400">
-          {selectedKeys === "all"
+          {/* {selectedKeys === "all"
             ? "All items selected"
-            : `${selectedKeys.size} of ${filteredItems.length} selected`}
+            : `${selectedKeys.size} of ${filteredItems.length} selected`} */}
         </span>
         <Pagination
           isCompact
@@ -422,7 +459,7 @@ export default function AppsTable({ apps }: AppsTableProps) {
             variant="flat"
             onPress={onPreviousPage}
           >
-            Previous
+            {translations.strings.previous}
           </Button>
           <Button
             isDisabled={pages === 1}
@@ -430,12 +467,12 @@ export default function AppsTable({ apps }: AppsTableProps) {
             variant="flat"
             onPress={onNextPage}
           >
-            Next
+            {translations.strings.next}
           </Button>
         </div>
       </div>
     );
-  }, [selectedKeys, items.length, page, pages, hasSearchFilter]);
+  }, [selectedKeys, items.length, page, pages, hasSearchFilter, columns]);
 
   if (status === "loading") {
     return <div>Loading...</div>; // or any other loading indicator

@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Table,
   TableHeader,
@@ -21,7 +21,7 @@ import {
   Chip,
   ChipProps,
 } from "@nextui-org/react";
-import { EventEntry, WorkingHoursTableProps } from "@/types";
+import { EventEntry, TableColumnTy, WorkingHoursTableProps } from "@/types";
 import { ChevronDownIcon } from "./chevronDownIcon";
 import { SearchIcon } from "./searchIcon";
 import { capitalize } from "./utils";
@@ -29,39 +29,7 @@ import { useSession } from "next-auth/react";
 import { PlusIcon } from "./plusIcon";
 import { VerticalDotsIcon } from "./verticalDotsIcon";
 import { formatDateTime } from "@/utils/formatDateTime";
-
-const columns = [
-  { name: "Username", uid: "userName", sortable: true },
-  { name: "Event Title", uid: "eventTitle", sortable: true },
-  { name: "Start At", uid: "startTime", sortable: true },
-  { name: "End At", uid: "endTime", sortable: true },
-  { name: "Hours", uid: "hours", sortable: true },
-  { name: "Status", uid: "status", sortable: true },
-  { name: "Actions", uid: "actions" },
-];
-
-const statusOptions = [
-  { name: "Verified", uid: "verified" },
-  { name: "Paused", uid: "pending" },
-  { name: "Closed", uid: "rejected" },
-  // Add other statuses as needed
-];
-
-const statusColorMap: Record<string, ChipProps["color"]> = {
-  verified: "success",
-  pending: "warning",
-  rejected: "danger",
-};
-
-const INITIAL_VISIBLE_COLUMNS = [
-  "userName",
-  "eventTitle",
-  "startTime",
-  "endTime",
-  "hours",
-  "status",
-  "actions",
-];
+import { useLanguage } from "@/utils/languageContext";
 
 export default function WorkingHoursTable({
   apps,
@@ -69,6 +37,93 @@ export default function WorkingHoursTable({
 }: WorkingHoursTableProps) {
   const { data: session, status } = useSession();
   const role = session?.user.role;
+
+  const { translations } = useLanguage();
+  const [columns, setColumns] = useState<TableColumnTy[]>([
+    {
+      name: `${translations.strings.firstName}`,
+      uid: "firstName",
+      sortable: true,
+    },
+    { name: `${translations.strings.event}`, uid: "title", sortable: true },
+    {
+      name: `${translations.strings.startDate}`,
+      uid: "startTime",
+      sortable: true,
+    },
+    {
+      name: `${translations.strings.deadline}`,
+      uid: "endTime",
+      sortable: true,
+    },
+    {
+      name: `${translations.strings.totalWorkingHours}`,
+      uid: "hours",
+      sortable: true,
+    },
+    { name: `${translations.strings.status}`, uid: "status", sortable: true },
+    {
+      name: `${translations.strings.actions}`,
+      uid: "actions",
+      sortable: false,
+    },
+  ]);
+
+  useEffect(() => {
+    setColumns([
+      {
+        name: `${translations.strings.firstName}`,
+        uid: "firstName",
+        sortable: true,
+      },
+      { name: `${translations.strings.event}`, uid: "title", sortable: true },
+      {
+        name: `${translations.strings.startDate}`,
+        uid: "startTime",
+        sortable: true,
+      },
+      {
+        name: `${translations.strings.deadline}`,
+        uid: "endTime",
+        sortable: true,
+      },
+      {
+        name: `${translations.strings.totalWorkingHours}`,
+        uid: "hours",
+        sortable: true,
+      },
+      { name: `${translations.strings.status}`, uid: "status", sortable: true },
+      {
+        name: `${translations.strings.actions}`,
+        uid: "actions",
+        sortable: false,
+      },
+    ]);
+  }, [translations]);
+
+  const statusOptions = [
+    { name: "Verified", uid: "verified" },
+    { name: "Paused", uid: "pending" },
+    { name: "Closed", uid: "rejected" },
+    // Add other statuses as needed
+  ];
+
+  const statusColorMap: Record<string, ChipProps["color"]> = {
+    verified: "success",
+    pending: "warning",
+    rejected: "danger",
+  };
+
+  const INITIAL_VISIBLE_COLUMNS = [
+    "userName",
+    "eventTitle",
+    "startTime",
+    "endTime",
+    "hours",
+    "status",
+    "actions",
+  ];
+
   const [filterValue, setFilterValue] = useState("");
   const [selectedKeys, setSelectedKeys] = useState<Selection>(new Set([]));
   const [visibleColumns, setVisibleColumns] = useState<Selection>(
@@ -100,7 +155,7 @@ export default function WorkingHoursTable({
       return filteredColumns.filter((column) => column.uid !== "actions");
     }
     return filteredColumns;
-  }, [visibleColumns, role]);
+  }, [columns, visibleColumns, translations, role]);
 
   const filteredItems = React.useMemo(() => {
     let filteredApps = [...apps];
@@ -284,7 +339,7 @@ export default function WorkingHoursTable({
                   endContent={<ChevronDownIcon className="text-small" />}
                   variant="flat"
                 >
-                  Status
+                  {translations.strings.status}
                 </Button>
               </DropdownTrigger>
               <DropdownMenu
@@ -308,7 +363,7 @@ export default function WorkingHoursTable({
                   endContent={<ChevronDownIcon className="text-small" />}
                   variant="flat"
                 >
-                  Columns
+                  {translations.strings.columns}
                 </Button>
               </DropdownTrigger>
               <DropdownMenu
@@ -334,17 +389,18 @@ export default function WorkingHoursTable({
                 endContent={<PlusIcon />}
                 disabled={apps.length === 0}
               >
-                Add Hours
+                {translations.strings.addNew}
               </Button>
             )}
           </div>
         </div>
         <div className="flex justify-between items-center">
           <span className="text-default-400 text-small">
-            Total {apps.length} Working Hours
+            {translations.strings.total} {apps.length}{" "}
+            {translations.strings.workingHours}
           </span>
           <Select
-            label="Rows per page:"
+            label={translations.strings.rpp}
             className="w-36 sm:max-w-xs"
             onChange={onRowsPerPageChange}
           >
@@ -370,15 +426,16 @@ export default function WorkingHoursTable({
     apps.length,
     hasSearchFilter,
     session,
+    columns,
   ]);
 
   const bottomContent = React.useMemo(() => {
     return (
       <div className="py-2 px-2 flex justify-between items-center">
         <span className="w-[30%] text-small text-default-400">
-          {selectedKeys === "all"
+          {/* {selectedKeys === "all"
             ? "All items selected"
-            : `${selectedKeys.size} of ${filteredItems.length} selected`}
+            : `${selectedKeys.size} of ${filteredItems.length} selected`} */}
         </span>
         <Pagination
           isCompact
@@ -396,7 +453,7 @@ export default function WorkingHoursTable({
             variant="flat"
             onPress={onPreviousPage}
           >
-            Previous
+            {translations.strings.previous}
           </Button>
           <Button
             isDisabled={pages === 1}
@@ -404,12 +461,12 @@ export default function WorkingHoursTable({
             variant="flat"
             onPress={onNextPage}
           >
-            Next
+            {translations.strings.next}
           </Button>
         </div>
       </div>
     );
-  }, [selectedKeys, items.length, page, pages, hasSearchFilter]);
+  }, [selectedKeys, items.length, page, pages, hasSearchFilter, columns]);
 
   if (status === "loading") {
     return <div>Loading...</div>; // or any other loading indicator

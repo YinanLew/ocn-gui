@@ -1,6 +1,6 @@
 "use client";
-import LanguageSwitcher from '@/components/languageSwitchert';
-import { useLanguage } from '@/utils/languageContext';
+import LanguageSwitcher from "@/components/languageSwitchert";
+import { useLanguage } from "@/utils/languageContext";
 import { signIn, signOut, useSession } from "next-auth/react";
 import { Session } from "next-auth";
 import { useState } from "react";
@@ -20,43 +20,45 @@ import {
 import { Link } from "@nextui-org/link";
 import { Logo } from "@/components/icons";
 import { formatName } from "@/utils/formatName";
-import { SiteConfig } from '@/types';
-
+import { SiteConfig } from "@/types";
 
 type UserControlsProps = {
   session: Session | null;
-};
-const UserAuth: React.FC<UserControlsProps> = ({ session }) => {
-  return (
-    <>
-      {session ? (
-        <>
-          <NavbarItem>
-            <p>{formatName(session.user.userInfo?.firstName)}</p>
-          </NavbarItem>
-          <NavbarItem>
-            <button onClick={() => signOut()}>Sign Out</button>
-          </NavbarItem>
-        </>
-      ) : (
-        <>
-          <NavbarItem>
-            <button onClick={() => signIn()}>Sign In</button>
-          </NavbarItem>
-        </>
-      )}
-    </>
-  );
 };
 
 export function Navbar() {
   const { data: session } = useSession();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { translations } = useLanguage();
-  const siteConfig = translations.siteConfig as SiteConfig;
+  // const siteConfig = translations.siteConfig as SiteConfig;
 
   // console.log(translations)
-
+  const UserAuth: React.FC<UserControlsProps> = ({ session }) => {
+    return (
+      <>
+        {session ? (
+          <>
+            <NavbarItem>
+              <p>{formatName(session.user.userInfo?.firstName)}</p>
+            </NavbarItem>
+            <NavbarItem>
+              <button onClick={() => signOut()}>
+                {translations.strings.logout}
+              </button>
+            </NavbarItem>
+          </>
+        ) : (
+          <>
+            <NavbarItem>
+              <button onClick={() => signIn()}>
+                {translations.strings.login}
+              </button>
+            </NavbarItem>
+          </>
+        )}
+      </>
+    );
+  };
 
   return (
     <NextUINavbar
@@ -74,20 +76,22 @@ export function Navbar() {
           </NextLink>
         </NavbarBrand>
         <ul className="hidden lg:flex gap-4 justify-start ml-2">
-          {siteConfig.navItems.map((item: { label: string, href: string }) => (
-            <NavbarItem key={item.href}>
-              <NextLink
-                className={clsx(
-                  linkStyles({ color: "foreground" }),
-                  "data-[active=true]:text-primary data-[active=true]:font-medium"
-                )}
-                color="foreground"
-                href={item.href}
-              >
-                {item.label}
-              </NextLink>
-            </NavbarItem>
-          ))}
+          {translations.siteConfig.navItems.map(
+            (item: { label: string; href: string }) => (
+              <NavbarItem key={item.href}>
+                <NextLink
+                  className={clsx(
+                    linkStyles({ color: "foreground" }),
+                    "data-[active=true]:text-primary data-[active=true]:font-medium"
+                  )}
+                  color="foreground"
+                  href={item.href}
+                >
+                  {item.label}
+                </NextLink>
+              </NavbarItem>
+            )
+          )}
         </ul>
       </NavbarContent>
 
@@ -114,7 +118,7 @@ export function Navbar() {
 
       <NavbarMenu>
         <div className="mx-4 mt-2 flex flex-col gap-2">
-          {siteConfig.navMenuItems.map((item, index) => (
+          {translations.siteConfig.navMenuItems.map((item, index) => (
             <NavbarMenuItem key={`${item}-${index}`}>
               <Link color="foreground" href={item.href} size="lg">
                 {item.label}

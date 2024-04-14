@@ -5,12 +5,14 @@ import { EventEntry } from "@/types";
 import { title } from "@/components/primitives";
 import { getAllUsersWorkingEntries } from "@/lib/getAllUsersWorkingEntries";
 import WorkingHoursTable from "@/components/workingHoursTable";
+import { useLanguage } from "@/utils/languageContext";
 
 export default function WorkingHoursPage() {
   const [allEventEntries, setAllEventEntries] = useState<EventEntry[]>([]);
   const { data: session, status } = useSession();
   const token = session?.user.token;
   const [error, setError] = useState("");
+  const { translations } = useLanguage();
 
   useEffect(() => {
     async function fetchData() {
@@ -47,7 +49,7 @@ export default function WorkingHoursPage() {
 
   return (
     <div>
-      <h1 className={title()}>Working Hours</h1>
+      <h1 className={title()}>{translations.strings.workingHours}</h1>
       <WorkingHoursTable apps={allEventEntries} eventId={""} />
     </div>
   );

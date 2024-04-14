@@ -1,7 +1,11 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
-import { FlattenedApplication, UsersTableTempProps } from "@/types";
+import {
+  FlattenedApplication,
+  TableColumnTy,
+  UsersTableTempProps,
+} from "@/types";
 import {
   Table,
   TableHeader,
@@ -30,70 +34,170 @@ import { ChevronDownIcon } from "./chevronDownIcon";
 import { SearchIcon } from "./searchIcon";
 import { capitalize } from "./utils";
 import { formatDate } from "@/utils/formatDate";
+import { useLanguage } from "@/utils/languageContext";
 import { AuthRequiredError, DataFetchFailedError } from "@/lib/exceptions";
-import { updateCertificateStatus } from "@/lib/updateCertificateStatus";
-
-const columns = [
-  { name: "Event", uid: "eventTitle", sortable: true },
-  { name: "First Name", uid: "firstName", sortable: true },
-  // { name: "Description", uid: "description", sortable: true },
-  { name: "Last Name", uid: "lastName", sortable: true },
-  { name: "Address", uid: "address", sortable: true },
-  { name: "Phone", uid: "phoneNumber", sortable: true },
-  { name: "Email", uid: "email", sortable: true },
-  { name: "Application Date", uid: "createdAt", sortable: true },
-  { name: "Speaking", uid: "spokenLanguage", sortable: true },
-  { name: "Writing", uid: "writtenLanguage", sortable: true },
-  { name: "Status", uid: "status", sortable: true },
-  {
-    name: "Certificate",
-    uid: "certificateStatus",
-    sortable: true,
-  },
-  { name: "Actions", uid: "actions" },
-];
-
-const statusOptions = [
-  { name: "Verified", uid: "verified" },
-  { name: "Paused", uid: "pending" },
-  { name: "Closed", uid: "rejected" },
-  { name: "Not Submitted", uid: "notSubmitted" },
-  { name: "Submitted", uid: "submitted" },
-  { name: "Approved", uid: "approved" },
-  { name: "Rejected", uid: "rejected" },
-  // Add other statuses as needed
-];
-
-const statusColorMap: Record<string, ChipProps["color"]> = {
-  verified: "success",
-  pending: "warning",
-  rejected: "danger",
-  notSubmitted: "default",
-  submitted: "warning",
-  approved: "success",
-};
-
-const INITIAL_VISIBLE_COLUMNS = [
-  "eventTitle",
-  "firstName",
-  "lastName",
-  "address",
-  "phoneNumber",
-  "email",
-  "createdAt",
-  "spokenLanguage",
-  "writtenLanguage",
-  "status",
-  "certificateStatus",
-  "actions",
-];
 
 export default function UsersTableTemp({
   applications,
   onRemoveApplication,
+  onIssueCertificate,
+  onRejectCertificate,
 }: UsersTableTempProps) {
   const { data: session, status } = useSession();
   const token = session?.user.token;
+
+  const { translations } = useLanguage();
+  const [columns, setColumns] = useState<TableColumnTy[]>([
+    {
+      name: `${translations.strings.event}`,
+      uid: "eventTitle",
+      sortable: true,
+    },
+    {
+      name: `${translations.strings.firstName}`,
+      uid: "firstName",
+      sortable: true,
+    },
+    // { name: "Description", uid: "description", sortable: true },
+    {
+      name: `${translations.strings.lastName}`,
+      uid: "lastName",
+      sortable: true,
+    },
+    {
+      name: `${translations.strings.location}`,
+      uid: "address",
+      sortable: true,
+    },
+    {
+      name: `${translations.strings.phoneNumber}`,
+      uid: "phoneNumber",
+      sortable: true,
+    },
+    { name: `${translations.strings.email}`, uid: "email", sortable: true },
+    {
+      name: `${translations.strings.appCreatedAt}`,
+      uid: "createdAt",
+      sortable: true,
+    },
+    {
+      name: `${translations.strings.spokenLanguage}`,
+      uid: "spokenLanguage",
+      sortable: true,
+    },
+    {
+      name: `${translations.strings.writtenLanguage}`,
+      uid: "writtenLanguage",
+      sortable: true,
+    },
+    { name: `${translations.strings.status}`, uid: "status", sortable: true },
+
+    {
+      name: `${translations.strings.certificateStatus}`,
+      uid: "certificateStatus",
+      sortable: true,
+    },
+    {
+      name: `${translations.strings.actions}`,
+      uid: "actions",
+      sortable: false,
+    },
+  ]);
+
+  useEffect(() => {
+    setColumns([
+      {
+        name: `${translations.strings.event}`,
+        uid: "eventTitle",
+        sortable: true,
+      },
+      {
+        name: `${translations.strings.firstName}`,
+        uid: "firstName",
+        sortable: true,
+      },
+      // { name: "Description", uid: "description", sortable: true },
+      {
+        name: `${translations.strings.lastName}`,
+        uid: "lastName",
+        sortable: true,
+      },
+      {
+        name: `${translations.strings.location}`,
+        uid: "address",
+        sortable: true,
+      },
+      {
+        name: `${translations.strings.phoneNumber}`,
+        uid: "phoneNumber",
+        sortable: true,
+      },
+      { name: `${translations.strings.email}`, uid: "email", sortable: true },
+      {
+        name: `${translations.strings.appCreatedAt}`,
+        uid: "createdAt",
+        sortable: true,
+      },
+      {
+        name: `${translations.strings.spokenLanguage}`,
+        uid: "spokenLanguage",
+        sortable: true,
+      },
+      {
+        name: `${translations.strings.writtenLanguage}`,
+        uid: "writtenLanguage",
+        sortable: true,
+      },
+      { name: `${translations.strings.status}`, uid: "status", sortable: true },
+
+      {
+        name: `${translations.strings.certificateStatus}`,
+        uid: "certificateStatus",
+        sortable: true,
+      },
+      {
+        name: `${translations.strings.actions}`,
+        uid: "actions",
+        sortable: false,
+      },
+    ]);
+  }, [translations]);
+
+  const statusOptions = [
+    { name: "Verified", uid: "verified" },
+    { name: "Paused", uid: "pending" },
+    { name: "Closed", uid: "rejected" },
+    { name: "Not Submitted", uid: "notSubmitted" },
+    { name: "Submitted", uid: "submitted" },
+    { name: "Approved", uid: "approved" },
+    { name: "Rejected", uid: "rejected" },
+    // Add other statuses as needed
+  ];
+
+  const statusColorMap: Record<string, ChipProps["color"]> = {
+    verified: "success",
+    pending: "warning",
+    rejected: "danger",
+    notSubmitted: "default",
+    submitted: "warning",
+    approved: "success",
+  };
+
+  const INITIAL_VISIBLE_COLUMNS = [
+    "eventTitle",
+    "firstName",
+    "lastName",
+    "address",
+    "phoneNumber",
+    "email",
+    "createdAt",
+    "spokenLanguage",
+    "writtenLanguage",
+    "status",
+    "certificateStatus",
+    "actions",
+  ];
+
   const [filterValue, setFilterValue] = useState("");
   const [selectedKeys, setSelectedKeys] = useState<Selection>(new Set([]));
   const [visibleColumns, setVisibleColumns] = useState<Selection>(
@@ -122,7 +226,7 @@ export default function UsersTableTemp({
     return columns.filter((column) =>
       Array.from(visibleColumns).includes(column.uid)
     );
-  }, [visibleColumns]);
+  }, [columns, visibleColumns, translations]);
 
   const filteredItems = React.useMemo(() => {
     let filteredUsers = [...applications];
@@ -196,26 +300,6 @@ export default function UsersTableTemp({
     }
   };
 
-  async function issueCertificate(
-    eventId: string,
-    userId: string,
-    token: string | undefined
-  ) {
-    if (token) {
-      await updateCertificateStatus(eventId, userId, "approved", token);
-    }
-  }
-
-  async function rejectCertificate(
-    eventId: string,
-    userId: string,
-    token: string | undefined
-  ) {
-    if (token) {
-      updateCertificateStatus(eventId, userId, "rejected", token);
-    }
-  }
-
   function getDropdownItems(application: FlattenedApplication) {
     // Always include these items
     const items = [];
@@ -233,7 +317,7 @@ export default function UsersTableTemp({
         <DropdownItem
           key="issueCertificate"
           onClick={() =>
-            issueCertificate(application.eventId, application.userId, token)
+            onIssueCertificate(application.eventId, application.userId, token)
           }
         >
           Issue Certificate
@@ -241,7 +325,7 @@ export default function UsersTableTemp({
         <DropdownItem
           key="rejectCertificate"
           onClick={() =>
-            rejectCertificate(application.eventId, application.userId, token)
+            onRejectCertificate(application.eventId, application.userId, token)
           }
         >
           Reject Certificate
@@ -390,7 +474,7 @@ export default function UsersTableTemp({
                   endContent={<ChevronDownIcon className="text-small" />}
                   variant="flat"
                 >
-                  Status
+                  {translations.strings.status}
                 </Button>
               </DropdownTrigger>
               <DropdownMenu
@@ -414,7 +498,7 @@ export default function UsersTableTemp({
                   endContent={<ChevronDownIcon className="text-small" />}
                   variant="flat"
                 >
-                  Columns
+                  {translations.strings.columns}
                 </Button>
               </DropdownTrigger>
               <DropdownMenu
@@ -446,10 +530,11 @@ export default function UsersTableTemp({
         </div>
         <div className="flex justify-between items-center">
           <span className="text-default-400 text-small">
-            Total {applications.length} applications
+            {translations.strings.total} {applications.length}{" "}
+            {translations.strings.event}
           </span>
           <Select
-            label="Rows per page:"
+            label={translations.strings.rpp}
             className="w-36 sm:max-w-xs"
             onChange={onRowsPerPageChange}
           >
@@ -475,15 +560,16 @@ export default function UsersTableTemp({
     applications.length,
     hasSearchFilter,
     session,
+    columns,
   ]);
 
   const bottomContent = React.useMemo(() => {
     return (
       <div className="py-2 px-2 flex justify-between items-center">
         <span className="w-[30%] text-small text-default-400">
-          {selectedKeys === "all"
+          {/* {selectedKeys === "all"
             ? "All items selected"
-            : `${selectedKeys.size} of ${filteredItems.length} selected`}
+            : `${selectedKeys.size} of ${filteredItems.length} selected`} */}
         </span>
         <Pagination
           isCompact
@@ -501,7 +587,7 @@ export default function UsersTableTemp({
             variant="flat"
             onPress={onPreviousPage}
           >
-            Previous
+            {translations.strings.previous}
           </Button>
           <Button
             isDisabled={pages === 1}
@@ -509,12 +595,12 @@ export default function UsersTableTemp({
             variant="flat"
             onPress={onNextPage}
           >
-            Next
+            {translations.strings.next}
           </Button>
         </div>
       </div>
     );
-  }, [selectedKeys, items.length, page, pages, hasSearchFilter]);
+  }, [selectedKeys, items.length, page, pages, hasSearchFilter, columns]);
 
   if (status === "loading") {
     return <div>Loading...</div>; // or any other loading indicator

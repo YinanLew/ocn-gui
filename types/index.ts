@@ -85,6 +85,16 @@ export interface FlattenedApplication
 export interface UsersTableTempProps {
   applications: FlattenedApplication[];
   onRemoveApplication: (eventObjectId: string) => void;
+  onIssueCertificate: (
+    eventId: string,
+    userId: string,
+    token: string | undefined
+  ) => void;
+  onRejectCertificate: (
+    eventId: string,
+    userId: string,
+    token: string | undefined
+  ) => void;
 }
 
 export interface EventWorkingHours {
@@ -116,6 +126,39 @@ export interface WorkingHoursTableProps {
   eventId: string;
 }
 
+export type LocalizationStrings = {
+  login: string;
+  logout: string;
+  apply: string;
+  closed: string;
+  event: string;
+  location: string;
+  releaseDate: string;
+  startDate: string;
+  deadline: string;
+  applicationCount: string;
+  totalWorkingHours: string;
+  status: string;
+  actions: string;
+  columns: string;
+  addNew: string;
+  total: string;
+  rpp: string;
+  previous: string;
+  next: string;
+  appCreatedAt: string;
+  myApps: string;
+  allApps: string;
+  firstName: string;
+  lastName: string;
+  phoneNumber: string;
+  email: string;
+  spokenLanguage: string;
+  writtenLanguage: string;
+  certificateStatus: string;
+  workingHours: string;
+};
+
 export type SiteConfig = {
   name: string;
   description: string;
@@ -131,5 +174,12 @@ export type SiteConfig = {
 };
 
 export type Translations = {
-  [key: string]: string | SiteConfig;
+  strings: LocalizationStrings;
+  siteConfig: SiteConfig;
+};
+
+export type TableColumnTy = {
+  name: string;
+  uid: string;
+  sortable: boolean;
 };

@@ -6,6 +6,8 @@ import { AuthRequiredError } from "@/lib/exceptions";
 import { getUserApplications } from "@/lib/getUserApplications";
 import { EventWorkingHours } from "@/types";
 import AppsTable from "@/components/myAppsTable";
+import { useLanguage } from "@/utils/languageContext";
+
 export default function MyApplicationsPage() {
   const { data: session, status } = useSession();
   const token = session?.user.token;
@@ -13,6 +15,7 @@ export default function MyApplicationsPage() {
   const [eventsWorkingHours, setEventsWorkingHours] = useState<
     EventWorkingHours[]
   >([]);
+  const { translations } = useLanguage();
 
   useEffect(() => {
     async function fetchData() {
@@ -47,7 +50,7 @@ export default function MyApplicationsPage() {
 
   return (
     <div>
-      <h1 className={title()}>My Applications</h1>
+      <h1 className={title()}>{translations.strings.myApps}</h1>
       <AppsTable apps={eventsWorkingHours} />
     </div>
   );

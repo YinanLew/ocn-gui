@@ -3,6 +3,7 @@ import { title } from "@/components/primitives";
 import { getEvent } from "@/lib/getEvent";
 import { useEffect, useState } from "react";
 import { signOut, useSession } from "next-auth/react";
+import { useLanguage } from "@/utils/languageContext";
 import { ApplicationFormData, Event, Params } from "@/types";
 import { Button } from "@nextui-org/react";
 import { formatDate } from "@/utils/formatDate";
@@ -16,6 +17,7 @@ export default function EventPage({ params: { eventId } }: Params) {
   const { data: session, status } = useSession();
   const [error, setError] = useState<string>();
   const router = useRouter();
+  const { translations } = useLanguage();
 
   useEffect(() => {
     async function fetchData() {
@@ -95,11 +97,11 @@ export default function EventPage({ params: { eventId } }: Params) {
       <h1>{formatDate(event?.releaseDate)}</h1>
       <h1>{event?.status}</h1>
       {isEventClosed ? (
-        <p className={title()}>This event is closed.</p>
+        <p className={title()}>{translations.strings.closed}</p>
       ) : shouldShowApplication ? (
         <ApplicationForm eventId={eventId} onSubmit={handleFormSubmit} />
       ) : session ? (
-        <Button onClick={handleApplyClick}>Apply</Button>
+        <Button onClick={handleApplyClick}>{translations.strings.apply}</Button>
       ) : null}
     </div>
   );

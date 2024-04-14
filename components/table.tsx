@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
-import { Event } from "@/types";
+import { Event, TableColumnTy } from "@/types";
 import {
   Table,
   TableHeader,
@@ -31,49 +31,121 @@ import { SearchIcon } from "./searchIcon";
 import { capitalize } from "./utils";
 import { getEvents } from "@/lib/getEvents";
 import { formatDate } from "@/utils/formatDate";
+import { useLanguage } from "@/utils/languageContext";
 import { AuthRequiredError, DataFetchFailedError } from "@/lib/exceptions";
-
-const columns = [
-  { name: "Event", uid: "title", sortable: true },
-  // { name: "Description", uid: "description", sortable: true },
-  { name: "Location", uid: "location", sortable: true },
-  { name: "Release Date", uid: "releaseDate", sortable: true },
-  { name: "Start Date", uid: "startDate", sortable: true },
-  { name: "Deadline", uid: "deadline", sortable: true },
-  { name: "Applications", uid: "applicationCount", sortable: true },
-  { name: "Total Hours", uid: "totalWorkingHours", sortable: true },
-  { name: "Status", uid: "status", sortable: true },
-  { name: "Actions", uid: "actions" },
-];
-
-const statusOptions = [
-  { name: "Active", uid: "active" },
-  { name: "Paused", uid: "paused" },
-  { name: "Closed", uid: "closed" },
-  // Add other statuses as needed
-];
-
-const statusColorMap: Record<string, ChipProps["color"]> = {
-  active: "success",
-  paused: "warning",
-  closed: "danger",
-};
-
-const INITIAL_VISIBLE_COLUMNS = [
-  "title",
-  // "description",
-  "location",
-  "releaseDate",
-  "startDate",
-  "deadline",
-  "applicationCount",
-  "totalWorkingHours",
-  "status",
-  "actions",
-];
 
 export default function TableTemp() {
   const { data: session, status } = useSession();
+
+  const { translations } = useLanguage();
+  const [columns, setColumns] = useState<TableColumnTy[]>([
+    { name: `${translations.strings.event}`, uid: "title", sortable: true },
+    {
+      name: `${translations.strings.location}`,
+      uid: "location",
+      sortable: true,
+    },
+    {
+      name: `${translations.strings.releaseDate}`,
+      uid: "releaseDate",
+      sortable: true,
+    },
+    {
+      name: `${translations.strings.startDate}`,
+      uid: "startDate",
+      sortable: true,
+    },
+    {
+      name: `${translations.strings.deadline}`,
+      uid: "deadline",
+      sortable: true,
+    },
+    {
+      name: `${translations.strings.applicationCount}`,
+      uid: "applicationCount",
+      sortable: true,
+    },
+    {
+      name: `${translations.strings.totalWorkingHours}`,
+      uid: "totalWorkingHours",
+      sortable: true,
+    },
+    { name: `${translations.strings.status}`, uid: "status", sortable: true },
+    {
+      name: `${translations.strings.actions}`,
+      uid: "actions",
+      sortable: false,
+    },
+  ]);
+
+  useEffect(() => {
+    setColumns([
+      { name: `${translations.strings.event}`, uid: "title", sortable: true },
+      {
+        name: `${translations.strings.location}`,
+        uid: "location",
+        sortable: true,
+      },
+      {
+        name: `${translations.strings.releaseDate}`,
+        uid: "releaseDate",
+        sortable: true,
+      },
+      {
+        name: `${translations.strings.startDate}`,
+        uid: "startDate",
+        sortable: true,
+      },
+      {
+        name: `${translations.strings.deadline}`,
+        uid: "deadline",
+        sortable: true,
+      },
+      {
+        name: `${translations.strings.applicationCount}`,
+        uid: "applicationCount",
+        sortable: true,
+      },
+      {
+        name: `${translations.strings.totalWorkingHours}`,
+        uid: "totalWorkingHours",
+        sortable: true,
+      },
+      { name: `${translations.strings.status}`, uid: "status", sortable: true },
+      {
+        name: `${translations.strings.actions}`,
+        uid: "actions",
+        sortable: false,
+      },
+    ]);
+  }, [translations]);
+
+  const statusOptions = [
+    { name: "Active", uid: "active" },
+    { name: "Paused", uid: "paused" },
+    { name: "Closed", uid: "closed" },
+    // Add other statuses as needed
+  ];
+
+  const statusColorMap: Record<string, ChipProps["color"]> = {
+    active: "success",
+    paused: "warning",
+    closed: "danger",
+  };
+
+  const INITIAL_VISIBLE_COLUMNS = [
+    "title",
+    // "description",
+    "location",
+    "releaseDate",
+    "startDate",
+    "deadline",
+    "applicationCount",
+    "totalWorkingHours",
+    "status",
+    "actions",
+  ];
+
   // const [error, setError] = useState("");
 
   const [events, setEvents] = useState<Event[]>([]);
@@ -114,7 +186,7 @@ export default function TableTemp() {
     return columns.filter((column) =>
       Array.from(visibleColumns).includes(column.uid)
     );
-  }, [visibleColumns]);
+  }, [columns, visibleColumns, translations]);
 
   const filteredItems = React.useMemo(() => {
     let filteredUsers = [...events];
@@ -344,7 +416,7 @@ export default function TableTemp() {
                   endContent={<ChevronDownIcon className="text-small" />}
                   variant="flat"
                 >
-                  Status
+                  {translations.strings.status}
                 </Button>
               </DropdownTrigger>
               <DropdownMenu
@@ -368,7 +440,7 @@ export default function TableTemp() {
                   endContent={<ChevronDownIcon className="text-small" />}
                   variant="flat"
                 >
-                  Columns
+                  {translations.strings.columns}
                 </Button>
               </DropdownTrigger>
               <DropdownMenu
@@ -393,17 +465,18 @@ export default function TableTemp() {
                 color="primary"
                 endContent={<PlusIcon />}
               >
-                Add New
+                {translations.strings.addNew}
               </Button>
             )}
           </div>
         </div>
         <div className="flex justify-between items-center">
           <span className="text-default-400 text-small">
-            Total {events.length} events
+            {translations.strings.total} {events.length}{" "}
+            {translations.strings.event}
           </span>
           <Select
-            label="Rows per page:"
+            label={translations.strings.rpp}
             className="w-36 sm:max-w-xs"
             onChange={onRowsPerPageChange}
           >
@@ -429,15 +502,16 @@ export default function TableTemp() {
     events.length,
     hasSearchFilter,
     session,
+    columns,
   ]);
 
   const bottomContent = React.useMemo(() => {
     return (
       <div className="py-2 px-2 flex justify-between items-center">
         <span className="w-[30%] text-small text-default-400">
-          {selectedKeys === "all"
+          {/* {selectedKeys === "all"
             ? "All items selected"
-            : `${selectedKeys.size} of ${filteredItems.length} selected`}
+            : `${selectedKeys.size} of ${filteredItems.length} selected`} */}
         </span>
         <Pagination
           isCompact
@@ -455,7 +529,7 @@ export default function TableTemp() {
             variant="flat"
             onPress={onPreviousPage}
           >
-            Previous
+            {translations.strings.previous}
           </Button>
           <Button
             isDisabled={pages === 1}
@@ -463,12 +537,12 @@ export default function TableTemp() {
             variant="flat"
             onPress={onNextPage}
           >
-            Next
+            {translations.strings.next}
           </Button>
         </div>
       </div>
     );
-  }, [selectedKeys, items.length, page, pages, hasSearchFilter]);
+  }, [selectedKeys, items.length, page, pages, hasSearchFilter, columns]);
 
   if (status === "loading") {
     return <div>Loading...</div>; // or any other loading indicator

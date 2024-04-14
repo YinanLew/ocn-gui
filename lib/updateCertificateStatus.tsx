@@ -27,7 +27,7 @@ export const updateCertificateStatus = async (
       throw new Error("Not Admin");
     }
     if (!res.ok) throw new Error("Failed to fetch events");
-    return res.json();
+    return { success: res.ok };
   } catch (error) {
     console.error("Error fetching events:", error);
     throw error;
