@@ -31,7 +31,7 @@ export default function WorkingHoursPage() {
         }
       } else if (status === "unauthenticated") {
         // If the session status is unauthenticated, set an error prompting to authenticate.
-        setError("Authentication required.");
+        setError("Access denied: Not an admin.");
       }
     }
     fetchData();

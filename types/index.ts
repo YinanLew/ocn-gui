@@ -56,6 +56,7 @@ export interface FlatEvent {
   status: string;
   eventTitle: string;
   _id: string;
+  certificateStatus: string;
 }
 
 export interface OriginalApplication {
@@ -67,6 +68,7 @@ export interface OriginalApplication {
   spokenLanguage: string;
   writtenLanguage: string;
   createdAt: string;
+  userId: string;
   email: string;
   events: FlatEvent[];
 }
@@ -77,11 +79,12 @@ export interface FlattenedApplication
   status: string;
   eventTitle: string;
   eventUniqueId: string;
+  certificateStatus: string;
 }
 
 export interface UsersTableTempProps {
   applications: FlattenedApplication[];
-  onRemoveApplication: (eventId: string) => void;
+  onRemoveApplication: (eventObjectId: string) => void;
 }
 
 export interface EventWorkingHours {
@@ -90,6 +93,7 @@ export interface EventWorkingHours {
   totalHours: number;
   status: string;
   appCreatedAt: string;
+  certificateStatus: string;
 }
 
 export interface AppsTableProps {
@@ -111,3 +115,21 @@ export interface WorkingHoursTableProps {
   apps: EventEntry[];
   eventId: string;
 }
+
+export type SiteConfig = {
+  name: string;
+  description: string;
+  navItems: { label: string; href: string }[];
+  navMenuItems: { label: string; href: string }[];
+  links: {
+    github: string;
+    twitter: string;
+    docs: string;
+    discord: string;
+    sponsor: string;
+  };
+};
+
+export type Translations = {
+  [key: string]: string | SiteConfig;
+};

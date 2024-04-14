@@ -34,6 +34,11 @@ const columns = [
   { name: "Total Hours", uid: "totalHours", sortable: true },
   { name: "Created At", uid: "appCreatedAt", sortable: true },
   { name: "Status", uid: "status", sortable: true },
+  {
+    name: "Certificate",
+    uid: "certificateStatus",
+    sortable: true,
+  },
   { name: "Actions", uid: "actions" },
 ];
 
@@ -41,6 +46,10 @@ const statusOptions = [
   { name: "Verified", uid: "verified" },
   { name: "Paused", uid: "pending" },
   { name: "Closed", uid: "rejected" },
+  { name: "Not Submitted", uid: "notSubmitted" },
+  { name: "Submitted", uid: "submitted" },
+  { name: "Approved", uid: "approved" },
+  { name: "Rejected", uid: "rejected" },
   // Add other statuses as needed
 ];
 
@@ -48,6 +57,9 @@ const statusColorMap: Record<string, ChipProps["color"]> = {
   verified: "success",
   pending: "warning",
   rejected: "danger",
+  notSubmitted: "default",
+  submitted: "warning",
+  approved: "success",
 };
 
 const INITIAL_VISIBLE_COLUMNS = [
@@ -55,11 +67,13 @@ const INITIAL_VISIBLE_COLUMNS = [
   "totalHours",
   "appCreatedAt",
   "status",
+  "certificateStatus",
   "actions",
 ];
 
 export default function AppsTable({ apps }: AppsTableProps) {
   const { data: session, status } = useSession();
+  const token = session?.user.token;
   const [filterValue, setFilterValue] = useState("");
   const [selectedKeys, setSelectedKeys] = useState<Selection>(new Set([]));
   const [visibleColumns, setVisibleColumns] = useState<Selection>(
@@ -128,6 +142,36 @@ export default function AppsTable({ apps }: AppsTableProps) {
     });
   }, [sortDescriptor, items]);
 
+  const submitCertificateApplication = async (
+    eventId: string,
+    token: string | undefined
+  ) => {
+    if (token) {
+      try {
+        const response = await fetch(
+          `http://localhost:8500/working-hours/submit-certificate/${eventId}`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        if (response.ok) {
+          alert("Certificate application submitted successfully.");
+        } else {
+          const error = await response.json();
+          alert(`Error submitting certificate application: ${error.message}`);
+        }
+      } catch (error) {
+        console.error("Failed to submit certificate application:", error);
+        alert("Error submitting certificate application. Please try again.");
+      }
+    }
+  };
+
   function getDropdownItems(app: EventWorkingHours) {
     const items = [];
 
@@ -140,6 +184,13 @@ export default function AppsTable({ apps }: AppsTableProps) {
           href={`/my-applications/${app._id}`}
         >
           Submit Hours
+        </DropdownItem>,
+        <DropdownItem
+          className="text-center"
+          key="apply"
+          onClick={() => submitCertificateApplication(app._id, token)}
+        >
+          Apply for Certificate
         </DropdownItem>
       );
     } else {
@@ -172,6 +223,17 @@ export default function AppsTable({ apps }: AppsTableProps) {
               variant="flat"
             >
               {app.status}
+            </Chip>
+          );
+        case "certificateStatus":
+          return (
+            <Chip
+              className="capitalize"
+              color={statusColorMap[app.certificateStatus]}
+              size="sm"
+              variant="flat"
+            >
+              {app.certificateStatus}
             </Chip>
           );
         case "actions":
@@ -305,7 +367,7 @@ export default function AppsTable({ apps }: AppsTableProps) {
         </div>
         <div className="flex justify-between items-center">
           <span className="text-default-400 text-small">
-            Total {apps.length} apps
+            Total {apps.length} Applications
           </span>
           <Select
             label="Rows per page:"

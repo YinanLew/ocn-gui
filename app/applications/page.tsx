@@ -8,7 +8,7 @@ import { FlattenedApplication, Params } from "@/types";
 import { flattenApplicationsForTable } from "@/utils/flattenApplicationsForTable";
 import { AuthRequiredError } from "@/lib/exceptions";
 
-export default function ApplicationsPage({ params: { eventId } }: Params) {
+export default function ApplicationsPage() {
   const [applications, setApplications] = useState<FlattenedApplication[]>([]);
   const { data: session, status } = useSession();
   const token = session?.user.token;
@@ -34,14 +34,16 @@ export default function ApplicationsPage({ params: { eventId } }: Params) {
         }
       } else if (status === "unauthenticated") {
         // If the session status is unauthenticated, set an error prompting to authenticate.
-        setError("Authentication required.");
+        setError("Access denied: Not an admin.");
       }
     }
     fetchData();
   }, [token, status]);
 
-  const handleRemoveApplication = (eventId: string) => {
-    setApplications(applications.filter((app) => app.eventId !== eventId));
+  const handleRemoveApplication = (eventObjectId: string) => {
+    setApplications(
+      applications.filter((app) => app.eventUniqueId !== eventObjectId)
+    );
   };
 
   if (status === "loading") {

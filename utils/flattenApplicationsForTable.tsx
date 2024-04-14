@@ -14,6 +14,7 @@ export const flattenApplicationsForTable = (
           status: event.status, // Event-specific status
           eventTitle: event.eventTitle, // Event title
           eventUniqueId: event._id,
+          certificateStatus: event.certificateStatus,
           // Explicitly exclude the 'events' array to avoid confusion
         }))
         .map(({ events, ...rest }) => rest); // Exclude the 'events' property from the final objects

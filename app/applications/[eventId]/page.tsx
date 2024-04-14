@@ -40,19 +40,19 @@ export default function EventPage({ params: { eventId } }: Params) {
     fetchData();
   }, [eventId, token, status]);
 
-  // if (authError) {
-  //   throw new AuthRequiredError();
-  // }
-
-  if (error) {
-    throw new Error(error);
-  }
+  const handleRemoveApplication = (eventObjectId: string) => {
+    setApplications(
+      applications.filter((app) => app.eventUniqueId !== eventObjectId)
+    );
+  };
 
   if (status === "loading") {
     return <div className={title()}>Loading...</div>;
   }
 
-  // console.log(applications);
+  if (error) {
+    throw new Error(error);
+  }
 
   return (
     <div>
@@ -61,7 +61,10 @@ export default function EventPage({ params: { eventId } }: Params) {
           ? `${applications[0].eventTitle} Applications`
           : "No Applications"}
       </h1>
-      <UsersTableTemp applications={applications} />
+      <UsersTableTemp
+        applications={applications}
+        onRemoveApplication={handleRemoveApplication}
+      />
     </div>
   );
 }

@@ -67,8 +67,6 @@ export default function WorkingHoursTable({
   apps,
   eventId,
 }: WorkingHoursTableProps) {
-  console.log(apps);
-
   const { data: session, status } = useSession();
   const role = session?.user.role;
   const [filterValue, setFilterValue] = useState("");
@@ -87,12 +85,22 @@ export default function WorkingHoursTable({
   const hasSearchFilter = Boolean(filterValue);
 
   const headerColumns = React.useMemo(() => {
-    if (visibleColumns === "all") return columns;
-
-    return columns.filter((column) =>
+    if (visibleColumns === "all") {
+      if (role === "admin") {
+        return columns;
+      } else {
+        return columns.filter((column) => column.uid !== "actions");
+      }
+    }
+    const filteredColumns = columns.filter((column) =>
       Array.from(visibleColumns).includes(column.uid)
     );
-  }, [visibleColumns]);
+
+    if (role !== "admin") {
+      return filteredColumns.filter((column) => column.uid !== "actions");
+    }
+    return filteredColumns;
+  }, [visibleColumns, role]);
 
   const filteredItems = React.useMemo(() => {
     let filteredApps = [...apps];
@@ -140,22 +148,22 @@ export default function WorkingHoursTable({
   }, [sortDescriptor, items]);
 
   function getDropdownItems(app: EventEntry) {
-    const items = [
-      <DropdownItem
-        className="text-center"
-        key="submit"
-        as="a"
-        href={`/working-hours/${app._id}/edit`}
-      >
-        Edit
-      </DropdownItem>,
-      <DropdownItem className="text-center" key="pending">
-        Delete
-      </DropdownItem>,
-    ];
+    let items: React.ReactElement[] = [];
 
     if (role === "admin") {
-      items.push();
+      items = [
+        <DropdownItem
+          className="text-center"
+          key="submit"
+          as="a"
+          href={`/working-hours/${app._id}/edit`}
+        >
+          Edit
+        </DropdownItem>,
+        <DropdownItem className="text-center" key="pending">
+          Delete
+        </DropdownItem>,
+      ];
     }
     return items;
   }
@@ -189,6 +197,9 @@ export default function WorkingHoursTable({
             </Chip>
           );
         case "actions":
+          if (role !== "admin") {
+            return null;
+          }
           return (
             <div className="relative flex justify-center items-center gap-2">
               <Dropdown>
@@ -330,7 +341,7 @@ export default function WorkingHoursTable({
         </div>
         <div className="flex justify-between items-center">
           <span className="text-default-400 text-small">
-            Total {apps.length} apps
+            Total {apps.length} Working Hours
           </span>
           <Select
             label="Rows per page:"

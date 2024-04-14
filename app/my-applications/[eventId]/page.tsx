@@ -48,8 +48,6 @@ export default function WorkingHoursSubmitPage({
     throw new Error(error);
   }
 
-  console.log(eventId);
-
   return (
     <div>
       <WorkingHoursTable apps={eventEntries} eventId={eventId} />

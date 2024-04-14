@@ -45,8 +45,6 @@ export default function MyApplicationsPage() {
     throw new AuthRequiredError();
   }
 
-  console.log(eventsWorkingHours);
-
   return (
     <div>
       <h1 className={title()}>My Applications</h1>

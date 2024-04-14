@@ -31,6 +31,7 @@ import { SearchIcon } from "./searchIcon";
 import { capitalize } from "./utils";
 import { formatDate } from "@/utils/formatDate";
 import { AuthRequiredError, DataFetchFailedError } from "@/lib/exceptions";
+import { updateCertificateStatus } from "@/lib/updateCertificateStatus";
 
 const columns = [
   { name: "Event", uid: "eventTitle", sortable: true },
@@ -44,6 +45,11 @@ const columns = [
   { name: "Speaking", uid: "spokenLanguage", sortable: true },
   { name: "Writing", uid: "writtenLanguage", sortable: true },
   { name: "Status", uid: "status", sortable: true },
+  {
+    name: "Certificate",
+    uid: "certificateStatus",
+    sortable: true,
+  },
   { name: "Actions", uid: "actions" },
 ];
 
@@ -51,6 +57,10 @@ const statusOptions = [
   { name: "Verified", uid: "verified" },
   { name: "Paused", uid: "pending" },
   { name: "Closed", uid: "rejected" },
+  { name: "Not Submitted", uid: "notSubmitted" },
+  { name: "Submitted", uid: "submitted" },
+  { name: "Approved", uid: "approved" },
+  { name: "Rejected", uid: "rejected" },
   // Add other statuses as needed
 ];
 
@@ -58,6 +68,9 @@ const statusColorMap: Record<string, ChipProps["color"]> = {
   verified: "success",
   pending: "warning",
   rejected: "danger",
+  notSubmitted: "default",
+  submitted: "warning",
+  approved: "success",
 };
 
 const INITIAL_VISIBLE_COLUMNS = [
@@ -71,6 +84,7 @@ const INITIAL_VISIBLE_COLUMNS = [
   "spokenLanguage",
   "writtenLanguage",
   "status",
+  "certificateStatus",
   "actions",
 ];
 
@@ -79,9 +93,7 @@ export default function UsersTableTemp({
   onRemoveApplication,
 }: UsersTableTempProps) {
   const { data: session, status } = useSession();
-  // const [error, setError] = useState("");
-
-  // const [applications, setApplications] = useState<Application[]>([]);
+  const token = session?.user.token;
   const [filterValue, setFilterValue] = useState("");
   const [selectedKeys, setSelectedKeys] = useState<Selection>(new Set([]));
   const [visibleColumns, setVisibleColumns] = useState<Selection>(
@@ -157,41 +169,56 @@ export default function UsersTableTemp({
     });
   }, [sortDescriptor, items]);
 
-  const handleDeleteEvent = async (eventId: string) => {
+  const handleDeleteEvent = async (eventId: string, eventObjectId: string) => {
     if (!session) {
       throw new AuthRequiredError();
     }
 
     try {
       const response = await fetch(
-        `http://localhost:8500/application/delete/${eventId}`,
+        `http://localhost:8500/application/delete/${eventId}/${eventObjectId}`,
         {
           method: "DELETE",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${session.user.token}`, // Include the JWT token in the Authorization header
+            Authorization: `Bearer ${session.user.token}`,
           },
         }
       );
 
       if (!response.ok) {
-        throw new Error("Failed to delete the application");
+        throw new Error("Failed to delete the application event");
       }
 
-      onRemoveApplication(eventId);
+      onRemoveApplication(eventObjectId);
     } catch (error) {
-      console.error("Error deleting application:", error);
-      // Handle error (e.g., show a notification to the user)
+      console.error("Error deleting application event:", error);
     }
   };
 
+  async function issueCertificate(
+    eventId: string,
+    userId: string,
+    token: string | undefined
+  ) {
+    if (token) {
+      await updateCertificateStatus(eventId, userId, "approved", token);
+    }
+  }
+
+  async function rejectCertificate(
+    eventId: string,
+    userId: string,
+    token: string | undefined
+  ) {
+    if (token) {
+      updateCertificateStatus(eventId, userId, "rejected", token);
+    }
+  }
+
   function getDropdownItems(application: FlattenedApplication) {
     // Always include these items
-    const items = [
-      // <DropdownItem key="apply" as="a" href={`/application/${application.eventId}`}>
-      //   Apply
-      // </DropdownItem>,
-    ];
+    const items = [];
 
     // Add additional items for admin users
     if (session && session.user.role === "admin") {
@@ -204,8 +231,26 @@ export default function UsersTableTemp({
           Edit
         </DropdownItem>,
         <DropdownItem
+          key="issueCertificate"
+          onClick={() =>
+            issueCertificate(application.eventId, application.userId, token)
+          }
+        >
+          Issue Certificate
+        </DropdownItem>,
+        <DropdownItem
+          key="rejectCertificate"
+          onClick={() =>
+            rejectCertificate(application.eventId, application.userId, token)
+          }
+        >
+          Reject Certificate
+        </DropdownItem>,
+        <DropdownItem
           key="delete"
-          onClick={() => handleDeleteEvent(application.eventId)}
+          onClick={() =>
+            handleDeleteEvent(application.eventId, application.eventUniqueId)
+          }
         >
           Delete
         </DropdownItem>
@@ -237,6 +282,17 @@ export default function UsersTableTemp({
             <div className="flex flex-col">
               {formatDate(application.createdAt)}
             </div>
+          );
+        case "certificateStatus":
+          return (
+            <Chip
+              className="capitalize"
+              color={statusColorMap[application.certificateStatus]}
+              size="sm"
+              variant="flat"
+            >
+              {cellValue}
+            </Chip>
           );
         case "status":
           return (
