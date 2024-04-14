@@ -1,0 +1,51 @@
+{
+  "login": "登录",
+  "logout": "退出",
+  "siteConfig": {
+    "name": "Next.js + NextUI",
+    "description": "Make beautiful websites regardless of your design experience.",
+    "navItems": [
+      {
+        "label": "活动",
+        "href": "/events"
+      },
+      {
+        "label": "我的申请",
+        "href": "/my-applications"
+      },
+      {
+        "label": "全部申请",
+        "href": "/applications"
+      },
+      {
+        "label": "活动时长",
+        "href": "/working-hours"
+      }
+    ],
+    "navMenuItems": [
+      {
+        "label": "活动",
+        "href": "/events"
+      },
+      {
+        "label": "我的申请",
+        "href": "/my-applications"
+      },
+      {
+        "label": "全部申请",
+        "href": "/applications"
+      },
+      {
+        "label": "活动时长",
+        "href": "/working-hours"
+      }
+    ],
+    "links": {
+      "github": "https://github.com/nextui-org/nextui",
+      "twitter": "https://twitter.com/getnextui",
+      "docs": "https://nextui.org",
+      "discord": "https://discord.gg/9b6yyZKmH4",
+      "sponsor": "https://patreon.com/jrgarciadev"
+    }
+  }
+}

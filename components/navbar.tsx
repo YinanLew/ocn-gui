@@ -1,4 +1,6 @@
 "use client";
+import LanguageSwitcher from '@/components/languageSwitchert';
+import { useLanguage } from '@/utils/languageContext';
 import { signIn, signOut, useSession } from "next-auth/react";
 import { Session } from "next-auth";
 import { useState } from "react";
@@ -6,7 +8,6 @@ import { link as linkStyles } from "@nextui-org/theme";
 import NextLink from "next/link";
 import clsx from "clsx";
 import { ThemeSwitch } from "@/components/theme-switch";
-import { siteConfig } from "@/config/site";
 import {
   NavbarBrand,
   NavbarContent,
@@ -19,11 +20,12 @@ import {
 import { Link } from "@nextui-org/link";
 import { Logo } from "@/components/icons";
 import { formatName } from "@/utils/formatName";
+import { SiteConfig } from '@/types';
+
 
 type UserControlsProps = {
   session: Session | null;
 };
-
 const UserAuth: React.FC<UserControlsProps> = ({ session }) => {
   return (
     <>
@@ -50,6 +52,11 @@ const UserAuth: React.FC<UserControlsProps> = ({ session }) => {
 export function Navbar() {
   const { data: session } = useSession();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { translations } = useLanguage();
+  const siteConfig = translations.siteConfig as SiteConfig;
+
+  // console.log(translations)
+
 
   return (
     <NextUINavbar
@@ -67,7 +74,7 @@ export function Navbar() {
           </NextLink>
         </NavbarBrand>
         <ul className="hidden lg:flex gap-4 justify-start ml-2">
-          {siteConfig.navItems.map((item) => (
+          {siteConfig.navItems.map((item: { label: string, href: string }) => (
             <NavbarItem key={item.href}>
               <NextLink
                 className={clsx(
@@ -91,12 +98,14 @@ export function Navbar() {
         <UserAuth session={session} />
         <NavbarItem className="hidden sm:flex gap-2">
           <ThemeSwitch />
+          <LanguageSwitcher />
         </NavbarItem>
       </NavbarContent>
 
       <NavbarContent className="sm:hidden basis-1 pl-4" justify="end">
         <UserAuth session={session} />
         <ThemeSwitch />
+        <LanguageSwitcher />
         <NavbarMenuToggle
           aria-label={isMenuOpen ? "Close menu" : "Open menu"}
           className="sm:hidden"
