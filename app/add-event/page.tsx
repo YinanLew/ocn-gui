@@ -7,11 +7,13 @@ import { title } from "@/components/primitives";
 import { Input, Select, SelectItem, Textarea, Button } from "@nextui-org/react";
 import { EventFormData } from "@/types";
 import { AuthRequiredError } from "@/lib/exceptions";
+import { useLanguage } from "@/utils/languageContext";
 
 export default function AddEventPage() {
   const { data: session, status } = useSession();
   const token = session?.user.token;
   const router = useRouter();
+  const { translations } = useLanguage();
 
   const [error, setError] = useState("");
   const currentDate = new Date().toISOString().split("T")[0];
@@ -68,7 +70,9 @@ export default function AddEventPage() {
 
   return (
     <div>
-      <h1 className={title()}>Add Event</h1>
+      <h1 className={title()}>
+        {translations.strings.addNew} {translations.strings.event}
+      </h1>
       <div className="mt-10 sm:mt-32">
         <form
           className="w-full flex flex-col justify-center items-center"
@@ -78,9 +82,9 @@ export default function AddEventPage() {
             <Input
               isRequired
               type="text"
-              label="Title"
+              label={translations.strings.event}
               labelPlacement="outside"
-              placeholder="New Event"
+              placeholder={translations.strings.event}
               className="max-w-xs"
               name="title"
               value={formData.title}
@@ -89,9 +93,9 @@ export default function AddEventPage() {
             <Input
               isRequired
               type="text"
-              label="Location"
+              label={translations.strings.location}
               labelPlacement="outside"
-              placeholder="Location"
+              placeholder={translations.strings.location}
               className="max-w-xs"
               name="location"
               value={formData.location}
@@ -100,9 +104,9 @@ export default function AddEventPage() {
             <Input
               isRequired
               type="date"
-              label="Release Date"
+              label={translations.strings.releaseDate}
               labelPlacement="outside"
-              placeholder="Release Date"
+              placeholder={translations.strings.releaseDate}
               className="max-w-xs"
               name="releaseDate"
               value={formData.releaseDate}
@@ -113,9 +117,9 @@ export default function AddEventPage() {
             <Input
               isRequired
               type="date"
-              label="Start Date"
+              label={translations.strings.startDate}
               labelPlacement="outside"
-              placeholder="Start Date"
+              placeholder={translations.strings.startDate}
               className="max-w-xs"
               name="startDate"
               value={formData.startDate}
@@ -124,9 +128,9 @@ export default function AddEventPage() {
             <Input
               isRequired
               type="date"
-              label="Deadline"
+              label={translations.strings.deadline}
               labelPlacement="outside"
-              placeholder="Deadline"
+              placeholder={translations.strings.deadline}
               className="max-w-xs"
               name="deadline"
               value={formData.deadline}
@@ -136,9 +140,9 @@ export default function AddEventPage() {
               <Input
                 isRequired
                 type="text"
-                label="Image URL"
+                label={translations.strings.image}
                 labelPlacement="outside"
-                placeholder="Image URL"
+                placeholder={translations.strings.image}
                 className="w-52 mr-2"
                 name="imageUrl"
                 value={formData.imageUrl}
@@ -146,36 +150,36 @@ export default function AddEventPage() {
               />
               <Select
                 className="w-32"
-                label="Status"
+                label={translations.strings.status}
                 labelPlacement="outside"
-                placeholder="Select Status"
+                placeholder={translations.strings.status}
                 value={formData.status}
                 onChange={(e) => handleSelectChange(e.target.value)}
               >
                 <SelectItem key="active" value="active">
-                  Active
+                  {translations.strings.active}
                 </SelectItem>
                 <SelectItem key="paused" value="paused">
-                  Paused
+                  {translations.strings.paused}
                 </SelectItem>
                 <SelectItem key="closed" value="closed">
-                  Closed
+                  {translations.strings.closedStatus}
                 </SelectItem>
               </Select>
             </div>
           </div>
           <Textarea
             isRequired
-            label="Description"
+            label={translations.strings.description}
             labelPlacement="outside"
-            placeholder="Enter event description"
+            placeholder={`${translations.strings.description}...`}
             className="w-full"
             name="description"
             value={formData.description}
             onChange={handleChange}
           />
           <Button className="mt-10" type="submit">
-            Create Event
+            {translations.strings.create}
           </Button>
         </form>
       </div>

@@ -326,7 +326,7 @@ export default function WorkingHoursTable({
           <Input
             isClearable
             className="w-full sm:max-w-[44%]"
-            placeholder="Search by name..."
+            placeholder={translations.strings.search}
             startContent={<SearchIcon />}
             value={filterValue}
             onClear={() => onClear()}

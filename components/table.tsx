@@ -121,9 +121,9 @@ export default function TableTemp() {
   }, [translations]);
 
   const statusOptions = [
-    { name: "Active", uid: "active" },
-    { name: "Paused", uid: "paused" },
-    { name: "Closed", uid: "closed" },
+    { name: `${translations.strings.active}`, uid: "active" },
+    { name: `${translations.strings.paused}`, uid: "paused" },
+    { name: `${translations.strings.closedStatus}`, uid: "closed" },
     // Add other statuses as needed
   ];
 
@@ -265,8 +265,14 @@ export default function TableTemp() {
   function getDropdownItems(event: Event) {
     // Always include these items
     const items = [
-      <DropdownItem key="view" as="a" href={`/events/${event._id}`}>
-        View
+      <DropdownItem key="view" textValue="View">
+        <Link
+          className="w-full text-sm text-foreground "
+          as="a"
+          href={`/events/${event._id}`}
+        >
+          View
+        </Link>
       </DropdownItem>,
       // <DropdownItem key="apply" as="a" href={`/event/${event._id}`}>
       //   Apply
@@ -276,8 +282,14 @@ export default function TableTemp() {
     // Add additional items for admin users
     if (session && session.user.role === "admin") {
       items.push(
-        <DropdownItem key="edit" as="a" href={`/events/${event._id}/edit`}>
-          Edit
+        <DropdownItem key="edit" textValue="Edit">
+          <Link
+            className="w-full text-sm text-foreground"
+            as="a"
+            href={`/events/${event._id}/edit`}
+          >
+            Edit
+          </Link>
         </DropdownItem>,
         <DropdownItem key="delete" onClick={() => handleDeleteEvent(event._id)}>
           Delete
@@ -403,7 +415,7 @@ export default function TableTemp() {
           <Input
             isClearable
             className="w-full sm:max-w-[44%]"
-            placeholder="Search by name..."
+            placeholder={translations.strings.search}
             startContent={<SearchIcon />}
             value={filterValue}
             onClear={() => onClear()}
@@ -459,13 +471,10 @@ export default function TableTemp() {
               </DropdownMenu>
             </Dropdown>
             {session && session.user.role === "admin" && (
-              <Button
-                as={"a"}
-                href="/add-event"
-                color="primary"
-                endContent={<PlusIcon />}
-              >
-                {translations.strings.addNew}
+              <Button endContent={<PlusIcon />}>
+                <Link className="text-foreground" as={"a"} href="/add-event">
+                  {translations.strings.addNew}
+                </Link>
               </Button>
             )}
           </div>

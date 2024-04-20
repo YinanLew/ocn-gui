@@ -164,13 +164,13 @@ export default function UsersTableTemp({
   }, [translations]);
 
   const statusOptions = [
-    { name: "Verified", uid: "verified" },
-    { name: "Paused", uid: "pending" },
-    { name: "Closed", uid: "rejected" },
-    { name: "Not Submitted", uid: "notSubmitted" },
-    { name: "Submitted", uid: "submitted" },
-    { name: "Approved", uid: "approved" },
-    { name: "Rejected", uid: "rejected" },
+    { name: `${translations.strings.verified}`, uid: "verified" },
+    { name: `${translations.strings.paused}`, uid: "pending" },
+    { name: `${translations.strings.closedStatus}`, uid: "rejected" },
+    // { name: "Not Submitted", uid: "notSubmitted" },
+    // { name: "Submitted", uid: "submitted" },
+    // { name: "Approved", uid: "approved" },
+    // { name: "Rejected", uid: "rejected" },
     // Add other statuses as needed
   ];
 
@@ -461,7 +461,7 @@ export default function UsersTableTemp({
           <Input
             isClearable
             className="w-full sm:max-w-[44%]"
-            placeholder="Search by name..."
+            placeholder={translations.strings.search}
             startContent={<SearchIcon />}
             value={filterValue}
             onClear={() => onClear()}

@@ -29,7 +29,22 @@
     "spokenLanguage": "口语",
     "writtenLanguage": "书面",
     "certificateStatus": "证书状态",
-    "workingHours": "活动时长申请"
+    "workingHours": "活动时长申请",
+    "search": "按名称搜索...",
+    "image": "图片链接",
+    "verified": "批准",
+    "active": "活跃",
+    "paused": "暂停",
+    "closedStatus": "关闭",
+    "notSubmitted": "证书未提交",
+    "submitted": "证书已提交",
+    "approved": "证书已批准",
+    "rejected": "证书已拒绝",
+    "description": "活动内容",
+    "create": "确认创建",
+    "view": "查看",
+    "edit": "编辑",
+    "delete": "删除"
   },
   "siteConfig": {
     "name": "Next.js + NextUI",

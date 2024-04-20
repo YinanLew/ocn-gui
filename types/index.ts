@@ -157,6 +157,21 @@ export type LocalizationStrings = {
   writtenLanguage: string;
   certificateStatus: string;
   workingHours: string;
+  search: string;
+  image: string;
+  verified: string;
+  active: string;
+  paused: string;
+  closedStatus: string;
+  notSubmitted: string;
+  submitted: string;
+  approved: string;
+  rejected: string;
+  description: string;
+  create: string;
+  view: string;
+  edit: string;
+  delete: string;
 };
 
 export type SiteConfig = {
