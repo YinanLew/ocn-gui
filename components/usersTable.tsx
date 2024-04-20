@@ -28,6 +28,14 @@ import {
   SelectItem,
   Link,
 } from "@nextui-org/react";
+import {
+  Modal,
+  ModalContent,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
+  useDisclosure,
+} from "@nextui-org/react";
 import { PlusIcon } from "./plusIcon";
 import { VerticalDotsIcon } from "./verticalDotsIcon";
 import { ChevronDownIcon } from "./chevronDownIcon";
@@ -44,6 +52,7 @@ export default function UsersTableTemp({
   onRejectCertificate,
 }: UsersTableTempProps) {
   const { data: session, status } = useSession();
+  const { isOpen, onOpen, onClose } = useDisclosure();
   const token = session?.user.token;
 
   const { translations } = useLanguage();
@@ -210,6 +219,8 @@ export default function UsersTableTemp({
     direction: "ascending",
   });
   const [page, setPage] = useState(1);
+  const [currentEventId, setCurrentEventId] = useState<string>("");
+  const [currentUniqueId, setCurrentUniqueId] = useState<string>("");
 
   useEffect(() => {
     const idsAreUnique =
@@ -277,6 +288,7 @@ export default function UsersTableTemp({
     if (!session) {
       throw new AuthRequiredError();
     }
+    console.log(eventId, eventObjectId);
 
     try {
       const response = await fetch(
@@ -295,6 +307,7 @@ export default function UsersTableTemp({
       }
 
       onRemoveApplication(eventObjectId);
+      onClose();
     } catch (error) {
       console.error("Error deleting application event:", error);
     }
@@ -307,10 +320,9 @@ export default function UsersTableTemp({
     // Add additional items for admin users
     if (session && session.user.role === "admin") {
       items.push(
-        <DropdownItem key="edit">
+        <DropdownItem key="edit" textValue="edit">
           <Link
-            className="w-full text-sm text-foreground"
-            as="a"
+            className="w-full flex flex-row justify-center text-sm text-foreground"
             href={`/applications/${application.eventId}/${application.eventUniqueId}/edit`}
           >
             Edit
@@ -318,6 +330,8 @@ export default function UsersTableTemp({
         </DropdownItem>,
         <DropdownItem
           key="issueCertificate"
+          className="text-center text-sm text-foreground"
+          textValue="issue"
           onClick={() =>
             onIssueCertificate(application.eventId, application.userId, token)
           }
@@ -326,6 +340,8 @@ export default function UsersTableTemp({
         </DropdownItem>,
         <DropdownItem
           key="rejectCertificate"
+          className="text-center text-sm text-foreground"
+          textValue="reject"
           onClick={() =>
             onRejectCertificate(application.eventId, application.userId, token)
           }
@@ -334,9 +350,14 @@ export default function UsersTableTemp({
         </DropdownItem>,
         <DropdownItem
           key="delete"
-          onClick={() =>
-            handleDeleteEvent(application.eventId, application.eventUniqueId)
-          }
+          color="danger"
+          className="text-center text-sm text-foreground"
+          textValue="delete"
+          onClick={() => {
+            setCurrentEventId(application.eventId);
+            setCurrentUniqueId(application.eventUniqueId);
+            onOpen();
+          }}
         >
           Delete
         </DropdownItem>
@@ -609,43 +630,60 @@ export default function UsersTableTemp({
   }
 
   return (
-    <Table
-      aria-label="Example table with custom cells, pagination and sorting"
-      isHeaderSticky
-      bottomContent={bottomContent}
-      bottomContentPlacement="outside"
-      classNames={{
-        wrapper: "max-h-[382px] sm:max-h-full w-full",
-      }}
-      selectedKeys={selectedKeys}
-      // selectionMode="multiple"
-      sortDescriptor={sortDescriptor}
-      topContent={topContent}
-      topContentPlacement="outside"
-      onSelectionChange={setSelectedKeys}
-      onSortChange={setSortDescriptor}
-    >
-      <TableHeader columns={headerColumns}>
-        {(column) => (
-          <TableColumn
-            className="text-center"
-            key={column.uid}
-            align={"center"}
-            allowsSorting={column.sortable}
-          >
-            {column.name}
-          </TableColumn>
-        )}
-      </TableHeader>
-      <TableBody emptyContent={"No applications found"} items={sortedItems}>
-        {(item) => (
-          <TableRow key={item.eventUniqueId}>
-            {(columnKey) => (
-              <TableCell>{renderCell(item, columnKey)}</TableCell>
-            )}
-          </TableRow>
-        )}
-      </TableBody>
-    </Table>
+    <>
+      <Table
+        aria-label="Example table with custom cells, pagination and sorting"
+        isHeaderSticky
+        bottomContent={bottomContent}
+        bottomContentPlacement="outside"
+        classNames={{
+          wrapper: "max-h-[382px] sm:max-h-full w-full",
+        }}
+        selectedKeys={selectedKeys}
+        // selectionMode="multiple"
+        sortDescriptor={sortDescriptor}
+        topContent={topContent}
+        topContentPlacement="outside"
+        onSelectionChange={setSelectedKeys}
+        onSortChange={setSortDescriptor}
+      >
+        <TableHeader columns={headerColumns}>
+          {(column) => (
+            <TableColumn
+              className="text-center"
+              key={column.uid}
+              align={"center"}
+              allowsSorting={column.sortable}
+            >
+              {column.name}
+            </TableColumn>
+          )}
+        </TableHeader>
+        <TableBody emptyContent={"No applications found"} items={sortedItems}>
+          {(item) => (
+            <TableRow key={item.eventUniqueId}>
+              {(columnKey) => (
+                <TableCell>{renderCell(item, columnKey)}</TableCell>
+              )}
+            </TableRow>
+          )}
+        </TableBody>
+      </Table>
+      <Modal isOpen={isOpen} onClose={onClose}>
+        <ModalContent>
+          <ModalHeader>{translations.strings.delConfirm}</ModalHeader>
+          <ModalBody>{translations.strings.delConfirmQueApp}</ModalBody>
+          <ModalFooter>
+            <Button
+              color="danger"
+              onClick={() => handleDeleteEvent(currentEventId, currentUniqueId)}
+            >
+              {translations.strings.delete}
+            </Button>
+            <Button onClick={onClose}>{translations.strings.cancel}</Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+    </>
   );
 }

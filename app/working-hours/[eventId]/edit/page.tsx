@@ -8,12 +8,14 @@ import { EventEntry, Params } from "@/types";
 import { getWorkingEntryById } from "@/lib/getWorkingEntryById";
 import { AuthRequiredError } from "@/lib/exceptions";
 import { updateWorkingEntryById } from "@/lib/updateWorkingEntryById";
+import { useLanguage } from "@/utils/languageContext";
 
 export default function EditWorkingEntryPage({ params: { eventId } }: Params) {
   const { data: session, status } = useSession();
   const token = session?.user.token;
   const router = useRouter();
   const [error, setError] = useState("");
+  const { translations } = useLanguage();
 
   const [formData, setFormData] = useState<EventEntry>({
     _id: "",
@@ -98,7 +100,10 @@ export default function EditWorkingEntryPage({ params: { eventId } }: Params) {
 
   return (
     <>
-      <h1 className={title()}>Edit & Approve Working Hours</h1>
+      <h1 className={title()}>
+        {translations.strings.edit}
+        {translations.strings.workingHours}
+      </h1>
 
       <form
         className="mt-10 sm:mt-28 w-full flex flex-col justify-center items-center"
@@ -106,22 +111,29 @@ export default function EditWorkingEntryPage({ params: { eventId } }: Params) {
       >
         <div className="w-full flex flex-col sm:flex-row justify-around items-center">
           <div className="max-w-xs text-center">
-            <h2>User: {formData.userName}</h2>
+            <h2>
+              {translations.strings.firstName} {translations.strings.lastName}:{" "}
+              {formData.userName}
+            </h2>
           </div>
 
           <div className="max-w-xs text-center">
-            <h2>Event: {formData.eventTitle}</h2>
+            <h2>
+              {translations.strings.event}: {formData.eventTitle}
+            </h2>
           </div>
 
           <div className="max-w-xs text-center">
-            <h2>Working Hours: {formData.hours}</h2>
+            <h2>
+              {translations.strings.workingHours}: {formData.hours}
+            </h2>
           </div>
         </div>
         <br />
         <br />
         <div className="w-full flex flex-col sm:flex-row justify-between items-center">
           <Select
-            label="Status"
+            label={translations.strings.status}
             labelPlacement="outside"
             className="max-w-xs"
             placeholder={formData.status}
@@ -129,20 +141,20 @@ export default function EditWorkingEntryPage({ params: { eventId } }: Params) {
             onChange={(e) => handleSelectChange(e.target.value)}
           >
             <SelectItem key="pending" value="pending">
-              Pending
+              {translations.strings.pending}
             </SelectItem>
             <SelectItem key="verified" value="verified">
-              Verified
+              {translations.strings.verified}
             </SelectItem>
             <SelectItem key="rejected" value="rejected">
-              Rejected
+              {translations.strings.rejected}
             </SelectItem>
           </Select>
           <Input
             type="datetime-local"
-            label="Start Time"
+            label={translations.strings.startDate}
             labelPlacement="outside"
-            placeholder="Start Time"
+            placeholder={translations.strings.startDate}
             className="max-w-xs"
             name="startTime"
             value={formData.startTime}
@@ -151,9 +163,9 @@ export default function EditWorkingEntryPage({ params: { eventId } }: Params) {
 
           <Input
             type="datetime-local"
-            label="End Time"
+            label={translations.strings.deadline}
             labelPlacement="outside"
-            placeholder="End Time"
+            placeholder={translations.strings.deadline}
             className="max-w-xs"
             name="endTime"
             value={formData.endTime}
@@ -161,7 +173,7 @@ export default function EditWorkingEntryPage({ params: { eventId } }: Params) {
           />
         </div>
         <Button className="mt-10" type="submit">
-          Update Application
+          {translations.strings.edit} {translations.strings.application}
         </Button>
       </form>
     </>

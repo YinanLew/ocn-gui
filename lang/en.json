@@ -3,6 +3,7 @@
     "login": "Sign In",
     "logout": "Sign Out",
     "apply": "Apply",
+    "application": "Application",
     "closed": "This event is closed.",
     "event": "Events",
     "location": "Location",
@@ -50,7 +51,12 @@
     "referral": "Referral",
     "experiences": "Experiences",
     "skills": "Skills",
-    "motivations": "Motivations"
+    "motivations": "Motivations",
+    "delConfirm": "Delete Confirmation",
+    "delConfirmQue": "Are you sure you want to delete this event?",
+    "delConfirmQueHours": "Are you sure you want to delete this working hour?",
+    "delConfirmQueApp": "Are you sure you want to delete this application?",
+    "cancel": "Cancel"
   },
   "siteConfig": {
     "name": "Next.js + NextUI",

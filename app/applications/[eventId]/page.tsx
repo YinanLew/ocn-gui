@@ -8,12 +8,14 @@ import UsersTableTemp from "@/components/usersTable";
 import { FlattenedApplication, Params } from "@/types";
 import { flattenApplicationsForTable } from "@/utils/flattenApplicationsForTable";
 import { updateCertificateStatus } from "@/lib/updateCertificateStatus";
+import { useLanguage } from "@/utils/languageContext";
 
 export default function EventPage({ params: { eventId } }: Params) {
   const [applications, setApplications] = useState<FlattenedApplication[]>([]);
   const { data: session, status } = useSession();
   const token = session?.user.token;
   const [error, setError] = useState("");
+  const { translations } = useLanguage();
   // const [authError, setAuthError] = useState("");
 
   useEffect(() => {
@@ -85,7 +87,7 @@ export default function EventPage({ params: { eventId } }: Params) {
     <div>
       <h1 className={title()}>
         {applications.length > 0
-          ? `${applications[0].eventTitle} Applications`
+          ? `${applications[0].eventTitle} ${translations.strings.application}`
           : "No Applications"}
       </h1>
       <UsersTableTemp

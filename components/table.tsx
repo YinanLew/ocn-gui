@@ -34,6 +34,7 @@ import {
 } from "@nextui-org/react";
 import { PlusIcon } from "./plusIcon";
 import { VerticalDotsIcon } from "./verticalDotsIcon";
+import { AiFillEye, AiFillEdit, AiFillDelete } from "react-icons/ai";
 import { ChevronDownIcon } from "./chevronDownIcon";
 import { SearchIcon } from "./searchIcon";
 import { capitalize } from "./utils";
@@ -241,6 +242,7 @@ export default function TableTemp() {
       }
     });
   }, [sortDescriptor, items]);
+
   const handleDeleteEvent = async () => {
     if (!session) {
       throw new AuthRequiredError();
@@ -272,13 +274,16 @@ export default function TableTemp() {
   function getDropdownItems(event: Event) {
     // Always include these items
     const items = [
-      <DropdownItem key="view" textValue="View">
+      <DropdownItem
+        className="text-center"
+        key="view"
+        textValue={translations.strings.view}
+      >
         <Link
-          className="w-full text-sm text-foreground "
-          as="a"
+          className="w-full flex flex-row justify-center text-sm text-foreground"
           href={`/events/${event._id}`}
         >
-          View
+          <p>{translations.strings.view}</p>
         </Link>
       </DropdownItem>,
       // <DropdownItem key="apply" as="a" href={`/event/${event._id}`}>
@@ -289,24 +294,30 @@ export default function TableTemp() {
     // Add additional items for admin users
     if (session && session.user.role === "admin") {
       items.push(
-        <DropdownItem key="edit" textValue="Edit">
+        <DropdownItem
+          className="text-center"
+          key="edit"
+          textValue={translations.strings.edit}
+        >
           <Link
-            className="w-full text-sm text-foreground"
+            className="w-full flex flex-row justify-center text-sm text-foreground"
             as="a"
             href={`/events/${event._id}/edit`}
           >
-            Edit
+            {translations.strings.edit}
           </Link>
         </DropdownItem>,
         <DropdownItem
+          className="text-center"
           key="delete"
           color="danger"
+          textValue={translations.strings.delete}
           onClick={() => {
             setCurrentEventId(event._id);
             onOpen();
           }}
         >
-          Delete
+          {translations.strings.delete}
         </DropdownItem>
       );
     }
@@ -381,7 +392,7 @@ export default function TableTemp() {
           return cellValue;
       }
     },
-    [session, events]
+    [session, events, translations]
   );
 
   const onNextPage = React.useCallback(() => {
@@ -613,13 +624,13 @@ export default function TableTemp() {
       </Table>
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalContent>
-          <ModalHeader>Delete Confirmation</ModalHeader>
-          <ModalBody>Are you sure you want to delete this event?</ModalBody>
+          <ModalHeader>{translations.strings.delConfirm}</ModalHeader>
+          <ModalBody>{translations.strings.delConfirmQue}</ModalBody>
           <ModalFooter>
             <Button color="danger" onClick={handleDeleteEvent}>
-              Delete
+              {translations.strings.delete}
             </Button>
-            <Button onClick={onClose}>Cancel</Button>
+            <Button onClick={onClose}>{translations.strings.cancel}</Button>
           </ModalFooter>
         </ModalContent>
       </Modal>

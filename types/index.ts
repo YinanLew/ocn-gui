@@ -124,12 +124,14 @@ export interface EventEntry {
 export interface WorkingHoursTableProps {
   apps: EventEntry[];
   eventId: string;
+  handleDeleteEntry: (currentEventId: string, onClose: () => void) => void;
 }
 
 export type LocalizationStrings = {
   login: string;
   logout: string;
   apply: string;
+  application: string;
   closed: string;
   event: string;
   location: string;
@@ -178,6 +180,11 @@ export type LocalizationStrings = {
   experiences: string;
   skills: string;
   motivations: string;
+  delConfirm: string;
+  delConfirmQue: string;
+  cancel: string;
+  delConfirmQueHours: string;
+  delConfirmQueApp: string;
 };
 
 export type SiteConfig = {

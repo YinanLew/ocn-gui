@@ -3,6 +3,7 @@
     "login": "登录",
     "logout": "退出",
     "apply": "申请",
+    "application": "申请",
     "closed": "活动申请已结束",
     "event": "活动",
     "location": "地址",
@@ -50,7 +51,12 @@
     "referral": "推荐人",
     "experiences": "志愿经验",
     "skills": "技能",
-    "motivations": "动机"
+    "motivations": "动机",
+    "delConfirm": "确定删除",
+    "delConfirmQue": "你确定要删除这个活动吗？",
+    "delConfirmQueHours": "你确定要删除这个志愿活动时长吗？",
+    "delConfirmQueApp": "你确定要删除这个申请吗?",
+    "cancel": "取消"
   },
   "siteConfig": {
     "name": "Next.js + NextUI",

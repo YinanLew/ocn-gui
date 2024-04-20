@@ -118,7 +118,9 @@ export default function EditApplicationPage({
 
   return (
     <>
-      <h1 className={title()}>Edit Application</h1>
+      <h1 className={title()}>
+        {translations.strings.edit} {translations.strings.apply}
+      </h1>
 
       <form
         className="mt-10 sm:mt-28 w-full flex flex-col justify-center items-center"

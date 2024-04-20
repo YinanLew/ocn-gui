@@ -7,11 +7,13 @@ import { Input, Button } from "@nextui-org/react";
 import { EventEntry, Params } from "@/types";
 import { AuthRequiredError } from "@/lib/exceptions";
 import { submitWorkingHours } from "@/lib/submitWorkingHours";
+import { useLanguage } from "@/utils/languageContext";
 
 export default function AddHoursPage({ params: { eventId } }: Params) {
   const { data: session, status } = useSession();
   const token = session?.user.token;
   const router = useRouter();
+  const { translations } = useLanguage();
 
   const [error, setError] = useState("");
   const [formData, setFormData] = useState<Partial<EventEntry>>({
@@ -64,7 +66,7 @@ export default function AddHoursPage({ params: { eventId } }: Params) {
 
   return (
     <div>
-      <h1 className={title()}>Add Working Hours</h1>
+      <h1 className={title()}>{translations.strings.addNew}</h1>
       <div className="mt-10 sm:mt-32">
         <form
           className="w-full flex flex-col justify-center items-center"

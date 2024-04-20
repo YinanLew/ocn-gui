@@ -6,6 +6,7 @@ import { title } from "@/components/primitives";
 import { getAllUsersWorkingEntries } from "@/lib/getAllUsersWorkingEntries";
 import WorkingHoursTable from "@/components/workingHoursTable";
 import { useLanguage } from "@/utils/languageContext";
+import { AuthRequiredError } from "@/lib/exceptions";
 
 export default function WorkingHoursPage() {
   const [allEventEntries, setAllEventEntries] = useState<EventEntry[]>([]);
@@ -39,6 +40,37 @@ export default function WorkingHoursPage() {
     fetchData();
   }, [token, status]);
 
+  const handleDeleteEntry = async (
+    currentEventId: string,
+    onClose: () => void
+  ) => {
+    if (!session) {
+      throw new AuthRequiredError();
+    }
+    try {
+      const response = await fetch(
+        `http://localhost:8500/working-hours/working-entry/delete/${currentEventId}`,
+        {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${session.user.token}`,
+          },
+        }
+      );
+      if (!response.ok) {
+        throw new Error("Failed to delete the event");
+      }
+      const updatedEntries = allEventEntries.filter(
+        (eventEntry) => eventEntry._id !== currentEventId
+      );
+      setAllEventEntries(updatedEntries);
+      onClose();
+    } catch (error) {
+      console.error("Error deleting event:", error);
+    }
+  };
+
   if (status === "loading") {
     return <div className={title()}>Loading...</div>;
   }
@@ -50,7 +82,11 @@ export default function WorkingHoursPage() {
   return (
     <div>
       <h1 className={title()}>{translations.strings.workingHours}</h1>
-      <WorkingHoursTable apps={allEventEntries} eventId={""} />
+      <WorkingHoursTable
+        apps={allEventEntries}
+        eventId={""}
+        handleDeleteEntry={handleDeleteEntry}
+      />
     </div>
   );
 }

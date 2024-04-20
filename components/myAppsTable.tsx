@@ -20,6 +20,7 @@ import {
   SelectItem,
   Chip,
   ChipProps,
+  Link,
 } from "@nextui-org/react";
 import { AppsTableProps, EventWorkingHours, TableColumnTy } from "@/types";
 import { VerticalDotsIcon } from "./verticalDotsIcon";
@@ -51,6 +52,11 @@ export default function AppsTable({ apps }: AppsTableProps) {
       sortable: true,
     },
     { name: `${translations.strings.status}`, uid: "status", sortable: true },
+    {
+      name: `${translations.strings.certificateStatus}`,
+      uid: "certificateStatus",
+      sortable: true,
+    },
     { name: `${translations.strings.actions}`, uid: "actions", sortable: true },
   ]);
 
@@ -73,6 +79,11 @@ export default function AppsTable({ apps }: AppsTableProps) {
       },
       { name: `${translations.strings.status}`, uid: "status", sortable: true },
       {
+        name: `${translations.strings.certificateStatus}`,
+        uid: "certificateStatus",
+        sortable: true,
+      },
+      {
         name: `${translations.strings.actions}`,
         uid: "actions",
         sortable: true,
@@ -84,9 +95,9 @@ export default function AppsTable({ apps }: AppsTableProps) {
     { name: `${translations.strings.verified}`, uid: "verified" },
     { name: `${translations.strings.paused}`, uid: "pending" },
     { name: `${translations.strings.closedStatus}`, uid: "rejected" },
-    // { name: `${translations.strings.notSubmitted}`, uid: "notSubmitted" },
-    // { name: `${translations.strings.submitted}`, uid: "submitted" },
-    // { name: `${translations.strings.approved}`, uid: "approved" },
+    { name: `${translations.strings.notSubmitted}`, uid: "notSubmitted" },
+    { name: `${translations.strings.submitted}`, uid: "submitted" },
+    { name: `${translations.strings.approved}`, uid: "approved" },
     // { name: `${translations.strings.rejected}`, uid: "rejected" },
     // Add other statuses as needed
   ];
@@ -215,14 +226,19 @@ export default function AppsTable({ apps }: AppsTableProps) {
         <DropdownItem
           className="text-center"
           key="submit"
-          as="a"
-          href={`/my-applications/${app._id}`}
+          textValue="submitHours"
         >
-          Submit Hours
+          <Link
+            className="w-full flex flex-row justify-center text-sm text-foreground"
+            href={`/my-applications/${app._id}`}
+          >
+            Submit Hours
+          </Link>
         </DropdownItem>,
         <DropdownItem
           className="text-center"
           key="apply"
+          textValue="certificateApply"
           onClick={() => submitCertificateApplication(app._id, token)}
         >
           Apply for Certificate

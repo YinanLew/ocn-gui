@@ -1,5 +1,6 @@
 "use client";
 import React, { useState, useEffect } from "react";
+import NextLink from "next/link";
 import {
   Table,
   TableHeader,
@@ -20,6 +21,15 @@ import {
   SelectItem,
   Chip,
   ChipProps,
+  Link,
+} from "@nextui-org/react";
+import {
+  Modal,
+  ModalContent,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
+  useDisclosure,
 } from "@nextui-org/react";
 import { EventEntry, TableColumnTy, WorkingHoursTableProps } from "@/types";
 import { ChevronDownIcon } from "./chevronDownIcon";
@@ -34,8 +44,10 @@ import { useLanguage } from "@/utils/languageContext";
 export default function WorkingHoursTable({
   apps,
   eventId,
+  handleDeleteEntry,
 }: WorkingHoursTableProps) {
   const { data: session, status } = useSession();
+  const { isOpen, onOpen, onClose } = useDisclosure();
   const role = session?.user.role;
 
   const { translations } = useLanguage();
@@ -136,6 +148,7 @@ export default function WorkingHoursTable({
     direction: "ascending",
   });
   const [page, setPage] = useState(1);
+  const [currentEventId, setCurrentEventId] = useState<string>("");
 
   const hasSearchFilter = Boolean(filterValue);
 
@@ -207,16 +220,25 @@ export default function WorkingHoursTable({
 
     if (role === "admin") {
       items = [
+        <DropdownItem className="text-center" key="submit" textValue="edit">
+          <Link
+            className="w-full flex flex-row justify-center text-center text-sm text-foreground"
+            href={`/working-hours/${app._id}/edit`}
+          >
+            {translations.strings.edit}
+          </Link>
+        </DropdownItem>,
         <DropdownItem
           className="text-center"
-          key="submit"
-          as="a"
-          href={`/working-hours/${app._id}/edit`}
+          key="delete"
+          color="danger"
+          textValue={translations.strings.delete}
+          onClick={() => {
+            setCurrentEventId(app._id);
+            onOpen();
+          }}
         >
-          Edit
-        </DropdownItem>,
-        <DropdownItem className="text-center" key="pending">
-          Delete
+          {translations.strings.delete}
         </DropdownItem>,
       ];
     }
@@ -384,14 +406,13 @@ export default function WorkingHoursTable({
               </DropdownMenu>
             </Dropdown>
             {role === "user" && (
-              <Button
-                as={"a"}
-                href={`/my-applications/${eventId}/add-entry`}
-                color="primary"
-                endContent={<PlusIcon />}
-                disabled={apps.length === 0}
-              >
-                {translations.strings.addNew}
+              <Button endContent={<PlusIcon />} disabled={apps.length === 0}>
+                <NextLink
+                  href={`/my-applications/${eventId}/add-entry`}
+                  passHref
+                >
+                  {translations.strings.addNew}
+                </NextLink>
               </Button>
             )}
           </div>
@@ -475,43 +496,60 @@ export default function WorkingHoursTable({
   }
 
   return (
-    <Table
-      aria-label="Example table with custom cells, pagination and sorting"
-      isHeaderSticky
-      bottomContent={bottomContent}
-      bottomContentPlacement="outside"
-      classNames={{
-        wrapper: "max-h-[382px] sm:max-h-full w-full",
-      }}
-      selectedKeys={selectedKeys}
-      // selectionMode="multiple"
-      sortDescriptor={sortDescriptor}
-      topContent={topContent}
-      topContentPlacement="outside"
-      onSelectionChange={setSelectedKeys}
-      onSortChange={setSortDescriptor}
-    >
-      <TableHeader columns={headerColumns}>
-        {(column) => (
-          <TableColumn
-            className="text-center"
-            key={column.uid}
-            align={"center"}
-            allowsSorting={column.sortable}
-          >
-            {column.name}
-          </TableColumn>
-        )}
-      </TableHeader>
-      <TableBody emptyContent={"No apps found"} items={sortedItems}>
-        {(item) => (
-          <TableRow key={item._id}>
-            {(columnKey) => (
-              <TableCell>{renderCell(item, columnKey)}</TableCell>
-            )}
-          </TableRow>
-        )}
-      </TableBody>
-    </Table>
+    <>
+      <Table
+        aria-label="Example table with custom cells, pagination and sorting"
+        isHeaderSticky
+        bottomContent={bottomContent}
+        bottomContentPlacement="outside"
+        classNames={{
+          wrapper: "max-h-[382px] sm:max-h-full w-full",
+        }}
+        selectedKeys={selectedKeys}
+        // selectionMode="multiple"
+        sortDescriptor={sortDescriptor}
+        topContent={topContent}
+        topContentPlacement="outside"
+        onSelectionChange={setSelectedKeys}
+        onSortChange={setSortDescriptor}
+      >
+        <TableHeader columns={headerColumns}>
+          {(column) => (
+            <TableColumn
+              className="text-center"
+              key={column.uid}
+              align={"center"}
+              allowsSorting={column.sortable}
+            >
+              {column.name}
+            </TableColumn>
+          )}
+        </TableHeader>
+        <TableBody emptyContent={"No apps found"} items={sortedItems}>
+          {(item) => (
+            <TableRow key={item._id}>
+              {(columnKey) => (
+                <TableCell>{renderCell(item, columnKey)}</TableCell>
+              )}
+            </TableRow>
+          )}
+        </TableBody>
+      </Table>
+      <Modal isOpen={isOpen} onClose={onClose}>
+        <ModalContent>
+          <ModalHeader>{translations.strings.delConfirm}</ModalHeader>
+          <ModalBody>{translations.strings.delConfirmQueHours}</ModalBody>
+          <ModalFooter>
+            <Button
+              color="danger"
+              onClick={() => handleDeleteEntry(currentEventId, onClose)}
+            >
+              {translations.strings.delete}
+            </Button>
+            <Button onClick={onClose}>{translations.strings.cancel}</Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+    </>
   );
 }

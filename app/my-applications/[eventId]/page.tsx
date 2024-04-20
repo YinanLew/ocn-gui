@@ -40,6 +40,8 @@ export default function WorkingHoursSubmitPage({
     fetchData();
   }, [token, status]);
 
+  const handleDeleteEntry = () => {};
+
   if (status === "loading") {
     return <div className={title()}>Loading...</div>;
   }
@@ -50,7 +52,11 @@ export default function WorkingHoursSubmitPage({
 
   return (
     <div>
-      <WorkingHoursTable apps={eventEntries} eventId={eventId} />
+      <WorkingHoursTable
+        apps={eventEntries}
+        eventId={eventId}
+        handleDeleteEntry={handleDeleteEntry}
+      />
     </div>
   );
 }

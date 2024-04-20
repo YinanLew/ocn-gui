@@ -7,11 +7,13 @@ import { Input, Button } from "@nextui-org/react";
 import { EventEntry, Params } from "@/types";
 import { AuthRequiredError } from "@/lib/exceptions";
 import { submitWorkingHours } from "@/lib/submitWorkingHours";
+import { useLanguage } from "@/utils/languageContext";
 
 export default function AddHoursPage({ params: { eventId } }: Params) {
   const { data: session, status } = useSession();
   const token = session?.user.token;
   const router = useRouter();
+  const { translations } = useLanguage();
 
   const [error, setError] = useState("");
   const [formData, setFormData] = useState<Partial<EventEntry>>({
@@ -64,7 +66,9 @@ export default function AddHoursPage({ params: { eventId } }: Params) {
 
   return (
     <div>
-      <h1 className={title()}>Add Working Hours</h1>
+      <h1 className={title()}>
+        {translations.strings.addNew} {translations.strings.workingHours}
+      </h1>
       <div className="mt-10 sm:mt-32">
         <form
           className="w-full flex flex-col justify-center items-center"
@@ -74,9 +78,9 @@ export default function AddHoursPage({ params: { eventId } }: Params) {
             <Input
               isRequired
               type="datetime-local"
-              label="Start Time"
+              label={translations.strings.startDate}
               labelPlacement="outside"
-              placeholder="Start Time Date"
+              placeholder={translations.strings.startDate}
               className="max-w-xs"
               name="startTime"
               value={formData.startTime}
@@ -86,9 +90,9 @@ export default function AddHoursPage({ params: { eventId } }: Params) {
             <Input
               isRequired
               type="datetime-local"
-              label="End Time"
+              label={translations.strings.deadline}
               labelPlacement="outside"
-              placeholder="End Time"
+              placeholder={translations.strings.deadline}
               className="max-w-xs"
               name="endTime"
               value={formData.endTime}
@@ -96,7 +100,7 @@ export default function AddHoursPage({ params: { eventId } }: Params) {
             />
           </div>
           <Button className="mt-10" type="submit">
-            Submit
+            {translations.strings.apply}
           </Button>
         </form>
       </div>
