@@ -24,6 +24,14 @@ import {
   SelectItem,
   Link,
 } from "@nextui-org/react";
+import {
+  Modal,
+  ModalContent,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
+  useDisclosure,
+} from "@nextui-org/react";
 import { PlusIcon } from "./plusIcon";
 import { VerticalDotsIcon } from "./verticalDotsIcon";
 import { ChevronDownIcon } from "./chevronDownIcon";
@@ -36,7 +44,7 @@ import { AuthRequiredError, DataFetchFailedError } from "@/lib/exceptions";
 
 export default function TableTemp() {
   const { data: session, status } = useSession();
-
+  const { isOpen, onOpen, onClose } = useDisclosure();
   const { translations } = useLanguage();
   const [columns, setColumns] = useState<TableColumnTy[]>([
     { name: `${translations.strings.event}`, uid: "title", sortable: true },
@@ -161,6 +169,7 @@ export default function TableTemp() {
     direction: "ascending",
   });
   const [page, setPage] = useState(1);
+  const [currentEventId, setCurrentEventId] = useState<string | null>(null);
 
   useEffect(() => {
     async function fetchData() {
@@ -232,33 +241,31 @@ export default function TableTemp() {
       }
     });
   }, [sortDescriptor, items]);
-
-  const handleDeleteEvent = async (eventId: string) => {
+  const handleDeleteEvent = async () => {
     if (!session) {
       throw new AuthRequiredError();
     }
-
     try {
       const response = await fetch(
-        `http://localhost:8500/events/delete/${eventId}`,
+        `http://localhost:8500/events/delete/${currentEventId}`,
         {
           method: "DELETE",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${session.user.token}`, // Include the JWT token in the Authorization header
+            Authorization: `Bearer ${session.user.token}`,
           },
         }
       );
-
       if (!response.ok) {
         throw new Error("Failed to delete the event");
       }
-
-      const updatedEvents = events.filter((event) => event._id !== eventId);
+      const updatedEvents = events.filter(
+        (event) => event._id !== currentEventId
+      );
       setEvents(updatedEvents);
+      onClose(); // Close the modal
     } catch (error) {
       console.error("Error deleting event:", error);
-      // Handle error (e.g., show a notification to the user)
     }
   };
 
@@ -291,7 +298,14 @@ export default function TableTemp() {
             Edit
           </Link>
         </DropdownItem>,
-        <DropdownItem key="delete" onClick={() => handleDeleteEvent(event._id)}>
+        <DropdownItem
+          key="delete"
+          color="danger"
+          onClick={() => {
+            setCurrentEventId(event._id);
+            onOpen();
+          }}
+        >
           Delete
         </DropdownItem>
       );
@@ -558,43 +572,57 @@ export default function TableTemp() {
   }
 
   return (
-    <Table
-      aria-label="Example table with custom cells, pagination and sorting"
-      isHeaderSticky
-      bottomContent={bottomContent}
-      bottomContentPlacement="outside"
-      classNames={{
-        wrapper: "max-h-[382px] sm:max-h-full w-full",
-      }}
-      selectedKeys={selectedKeys}
-      // selectionMode="multiple"
-      sortDescriptor={sortDescriptor}
-      topContent={topContent}
-      topContentPlacement="outside"
-      onSelectionChange={setSelectedKeys}
-      onSortChange={setSortDescriptor}
-    >
-      <TableHeader columns={headerColumns}>
-        {(column) => (
-          <TableColumn
-            className="text-center"
-            key={column.uid}
-            align={"center"}
-            allowsSorting={column.sortable}
-          >
-            {column.name}
-          </TableColumn>
-        )}
-      </TableHeader>
-      <TableBody emptyContent={"No events found"} items={sortedItems}>
-        {(item) => (
-          <TableRow key={item._id}>
-            {(columnKey) => (
-              <TableCell>{renderCell(item, columnKey)}</TableCell>
-            )}
-          </TableRow>
-        )}
-      </TableBody>
-    </Table>
+    <>
+      <Table
+        aria-label="Example table with custom cells, pagination and sorting"
+        isHeaderSticky
+        bottomContent={bottomContent}
+        bottomContentPlacement="outside"
+        classNames={{
+          wrapper: "max-h-[382px] sm:max-h-full w-full",
+        }}
+        selectedKeys={selectedKeys}
+        // selectionMode="multiple"
+        sortDescriptor={sortDescriptor}
+        topContent={topContent}
+        topContentPlacement="outside"
+        onSelectionChange={setSelectedKeys}
+        onSortChange={setSortDescriptor}
+      >
+        <TableHeader columns={headerColumns}>
+          {(column) => (
+            <TableColumn
+              className="text-center"
+              key={column.uid}
+              align={"center"}
+              allowsSorting={column.sortable}
+            >
+              {column.name}
+            </TableColumn>
+          )}
+        </TableHeader>
+        <TableBody emptyContent={"No events found"} items={sortedItems}>
+          {(item) => (
+            <TableRow key={item._id}>
+              {(columnKey) => (
+                <TableCell>{renderCell(item, columnKey)}</TableCell>
+              )}
+            </TableRow>
+          )}
+        </TableBody>
+      </Table>
+      <Modal isOpen={isOpen} onClose={onClose}>
+        <ModalContent>
+          <ModalHeader>Delete Confirmation</ModalHeader>
+          <ModalBody>Are you sure you want to delete this event?</ModalBody>
+          <ModalFooter>
+            <Button color="danger" onClick={handleDeleteEvent}>
+              Delete
+            </Button>
+            <Button onClick={onClose}>Cancel</Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+    </>
   );
 }
