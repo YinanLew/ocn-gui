@@ -7,6 +7,7 @@ import { getApplicationsById } from "@/lib/getApplicationsById";
 import UsersTableTemp from "@/components/usersTable";
 import { FlattenedApplication, Params } from "@/types";
 import { flattenApplicationsForTable } from "@/utils/flattenApplicationsForTable";
+import { updateCertificateStatus } from "@/lib/updateCertificateStatus";
 
 export default function EventPage({ params: { eventId } }: Params) {
   const [applications, setApplications] = useState<FlattenedApplication[]>([]);
@@ -46,6 +47,32 @@ export default function EventPage({ params: { eventId } }: Params) {
     );
   };
 
+  const handleCertificateStatusChange = (
+    eventId: string,
+    userId: string,
+    newStatus: string,
+    token: string | undefined
+  ) => {
+    if (token) {
+    }
+  };
+
+  const issueCertificate = (
+    eventId: string,
+    userId: string,
+    token: string | undefined
+  ) => {
+    handleCertificateStatusChange(eventId, userId, "approved", token);
+  };
+
+  const rejectCertificate = (
+    eventId: string,
+    userId: string,
+    token: string | undefined
+  ) => {
+    handleCertificateStatusChange(eventId, userId, "rejected", token);
+  };
+
   if (status === "loading") {
     return <div className={title()}>Loading...</div>;
   }
@@ -64,6 +91,8 @@ export default function EventPage({ params: { eventId } }: Params) {
       <UsersTableTemp
         applications={applications}
         onRemoveApplication={handleRemoveApplication}
+        onIssueCertificate={issueCertificate}
+        onRejectCertificate={rejectCertificate}
       />
     </div>
   );

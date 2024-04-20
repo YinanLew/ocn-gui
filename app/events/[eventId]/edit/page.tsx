@@ -9,12 +9,14 @@ import { EventFormData, Params } from "@/types";
 import { updateEvent } from "@/lib/updateEvent";
 import { formatDate } from "@/utils/formatDate";
 import { AuthRequiredError } from "@/lib/exceptions";
+import { useLanguage } from "@/utils/languageContext";
 
 export default function EditEventPage({ params: { eventId } }: Params) {
   const { data: session, status } = useSession();
   const token = session?.user.token;
   const [error, setError] = useState("");
   const router = useRouter();
+  const { translations } = useLanguage();
 
   const [formData, setFormData] = useState<EventFormData>({
     title: "",
@@ -88,7 +90,9 @@ export default function EditEventPage({ params: { eventId } }: Params) {
 
   return (
     <>
-      <h1 className={title()}>Edit Event</h1>
+      <h1 className={title()}>
+        {translations.strings.edit} {translations.strings.event}
+      </h1>
 
       <form
         className="mt-10 sm:mt-28 w-full flex flex-col justify-center items-center"
@@ -98,9 +102,9 @@ export default function EditEventPage({ params: { eventId } }: Params) {
           <Input
             isRequired
             type="text"
-            label="Title"
+            label={translations.strings.event}
             labelPlacement="outside"
-            placeholder="New Event"
+            placeholder={`${translations.strings.addNew} ${translations.strings.event}`}
             className="max-w-xs"
             name="title"
             value={formData.title}
@@ -109,9 +113,9 @@ export default function EditEventPage({ params: { eventId } }: Params) {
           <Input
             isRequired
             type="text"
-            label="Location"
+            label={translations.strings.location}
             labelPlacement="outside"
-            placeholder="Location"
+            placeholder={translations.strings.location}
             className="max-w-xs"
             name="location"
             value={formData.location}
@@ -120,9 +124,9 @@ export default function EditEventPage({ params: { eventId } }: Params) {
           <Input
             isRequired
             type="date"
-            label="Release Date"
+            label={translations.strings.releaseDate}
             labelPlacement="outside"
-            placeholder="Release Date"
+            placeholder={translations.strings.releaseDate}
             className="max-w-xs"
             name="releaseDate"
             value={formData.releaseDate}
@@ -133,9 +137,9 @@ export default function EditEventPage({ params: { eventId } }: Params) {
           <Input
             isRequired
             type="date"
-            label="Start Date"
+            label={translations.strings.startDate}
             labelPlacement="outside"
-            placeholder="Start Date"
+            placeholder={translations.strings.startDate}
             className="max-w-xs"
             name="startDate"
             value={formData.startDate}
@@ -144,9 +148,9 @@ export default function EditEventPage({ params: { eventId } }: Params) {
           <Input
             isRequired
             type="date"
-            label="Deadline"
+            label={translations.strings.deadline}
             labelPlacement="outside"
-            placeholder="Deadline"
+            placeholder={translations.strings.deadline}
             className="max-w-xs"
             name="deadline"
             value={formData.deadline}
@@ -156,9 +160,9 @@ export default function EditEventPage({ params: { eventId } }: Params) {
             <Input
               isRequired
               type="text"
-              label="Image URL"
+              label={translations.strings.image}
               labelPlacement="outside"
-              placeholder="Image URL"
+              placeholder={translations.strings.image}
               className="w-52 mr-2"
               name="imageUrl"
               value={formData.imageUrl}
@@ -166,36 +170,36 @@ export default function EditEventPage({ params: { eventId } }: Params) {
             />
             <Select
               className="w-32"
-              label="Status"
+              label={translations.strings.status}
               labelPlacement="outside"
-              placeholder="Select Status"
+              placeholder={translations.strings.status}
               value={formData.status}
               onChange={(e) => handleSelectChange(e.target.value)}
             >
               <SelectItem key="active" value="active">
-                Active
+                {translations.strings.active}
               </SelectItem>
               <SelectItem key="paused" value="paused">
-                Paused
+                {translations.strings.paused}
               </SelectItem>
               <SelectItem key="closed" value="closed">
-                Closed
+                {translations.strings.closed}
               </SelectItem>
             </Select>
           </div>
         </div>
         <Textarea
           isRequired
-          label="Description"
+          label={translations.strings.description}
           labelPlacement="outside"
-          placeholder="Enter event description"
+          placeholder={`${translations.strings.description}`}
           className="w-full"
           name="description"
           value={formData.description}
           onChange={handleChange}
         />
         <Button className="mt-10" type="submit">
-          Update Event
+          {translations.strings.edit} {translations.strings.event}
         </Button>
       </form>
     </>

@@ -307,12 +307,14 @@ export default function UsersTableTemp({
     // Add additional items for admin users
     if (session && session.user.role === "admin") {
       items.push(
-        <DropdownItem
-          key="edit"
-          as="a"
-          href={`/applications/${application.eventId}/${application.eventUniqueId}/edit`}
-        >
-          Edit
+        <DropdownItem key="edit">
+          <Link
+            className="w-full text-sm text-foreground"
+            as="a"
+            href={`/applications/${application.eventId}/${application.eventUniqueId}/edit`}
+          >
+            Edit
+          </Link>
         </DropdownItem>,
         <DropdownItem
           key="issueCertificate"

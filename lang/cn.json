@@ -40,11 +40,17 @@
     "submitted": "证书已提交",
     "approved": "证书已批准",
     "rejected": "证书已拒绝",
+    "appRejected": "申请已拒绝",
     "description": "活动内容",
     "create": "确认创建",
     "view": "查看",
     "edit": "编辑",
-    "delete": "删除"
+    "delete": "删除",
+    "pending": "审核中",
+    "referral": "推荐人",
+    "experiences": "志愿经验",
+    "skills": "技能",
+    "motivations": "动机"
   },
   "siteConfig": {
     "name": "Next.js + NextUI",

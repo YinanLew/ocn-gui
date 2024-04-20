@@ -167,11 +167,17 @@ export type LocalizationStrings = {
   submitted: string;
   approved: string;
   rejected: string;
+  appRejected: string;
   description: string;
   create: string;
   view: string;
   edit: string;
   delete: string;
+  pending: string;
+  referral: string;
+  experiences: string;
+  skills: string;
+  motivations: string;
 };
 
 export type SiteConfig = {

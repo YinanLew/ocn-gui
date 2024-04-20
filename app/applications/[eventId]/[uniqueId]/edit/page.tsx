@@ -8,6 +8,7 @@ import { ApplicationFormData, Params } from "@/types";
 import { getApplicationByUniqueId } from "@/lib/getApplicationByUniqueId";
 import { updateApplicationByUniqueId } from "@/lib/updateApplicationByUniqueId";
 import { AuthRequiredError } from "@/lib/exceptions";
+import { useLanguage } from "@/utils/languageContext";
 
 export default function EditApplicationPage({
   params: { eventId, uniqueId },
@@ -16,6 +17,8 @@ export default function EditApplicationPage({
   const token = session?.user.token;
   const router = useRouter();
   const [error, setError] = useState("");
+  const { translations } = useLanguage();
+
   // const [authError, setAuthError] = useState("");
 
   // Initialize form data with application-specific fields
@@ -124,9 +127,9 @@ export default function EditApplicationPage({
         <div className="w-full flex flex-col sm:flex-row justify-between items-center">
           <Input
             type="text"
-            label="First Name"
+            label={translations.strings.firstName}
             labelPlacement="outside"
-            placeholder="First Name"
+            placeholder={translations.strings.firstName}
             className="max-w-xs"
             name="firstName"
             value={formData.firstName}
@@ -135,9 +138,9 @@ export default function EditApplicationPage({
           <div className="flex flex-row justify-between items-center">
             <Input
               type="text"
-              label="Last Name"
+              label={translations.strings.lastName}
               labelPlacement="outside"
-              placeholder="Last Name"
+              placeholder={translations.strings.lastName}
               className="max-w-xs mr-16"
               name="lastName"
               value={formData.lastName}
@@ -145,29 +148,29 @@ export default function EditApplicationPage({
             />
 
             <Select
-              label="Status"
+              label={translations.strings.status}
               labelPlacement="outside"
               placeholder={formData.status}
               value={formData.status}
               onChange={(e) => handleSelectChange(e.target.value)}
             >
               <SelectItem key="pending" value="pending">
-                Pending
+                {translations.strings.pending}
               </SelectItem>
               <SelectItem key="verified" value="verified">
-                Verified
+                {translations.strings.verified}
               </SelectItem>
               <SelectItem key="rejected" value="rejected">
-                Rejected
+                {translations.strings.appRejected}
               </SelectItem>
             </Select>
           </div>
 
           <Input
             type="text"
-            label="Address"
+            label={translations.strings.location}
             labelPlacement="outside"
-            placeholder="Address"
+            placeholder={translations.strings.location}
             className="max-w-xs"
             name="address"
             value={formData.address}
@@ -177,9 +180,9 @@ export default function EditApplicationPage({
         <div className="w-full flex flex-col sm:flex-row justify-between items-center">
           <Input
             type="text"
-            label="Phone"
+            label={translations.strings.phoneNumber}
             labelPlacement="outside"
-            placeholder="Phone"
+            placeholder={translations.strings.phoneNumber}
             className="max-w-xs"
             name="phoneNumber"
             value={formData.phoneNumber}
@@ -189,9 +192,9 @@ export default function EditApplicationPage({
           <Input
             isRequired
             type="email"
-            label="Email"
+            label={translations.strings.email}
             labelPlacement="outside"
-            placeholder="Email"
+            placeholder={translations.strings.email}
             className="max-w-xs"
             name="email"
             value={formData.email}
@@ -200,9 +203,9 @@ export default function EditApplicationPage({
 
           <Input
             type="text"
-            label="Spoken Language"
+            label={translations.strings.spokenLanguage}
             labelPlacement="outside"
-            placeholder="Spoken Language"
+            placeholder={translations.strings.spokenLanguage}
             className="max-w-xs"
             name="spokenLanguage"
             value={formData.spokenLanguage}
@@ -212,9 +215,9 @@ export default function EditApplicationPage({
         <div className="w-full flex flex-col sm:flex-row justify-between items-center">
           <Input
             type="text"
-            label="Written Language"
+            label={translations.strings.writtenLanguage}
             labelPlacement="outside"
-            placeholder="Written Language"
+            placeholder={translations.strings.writtenLanguage}
             className="max-w-xs"
             name="writtenLanguage"
             value={formData.writtenLanguage}
@@ -223,9 +226,9 @@ export default function EditApplicationPage({
 
           <Input
             type="text"
-            label="Referral Source"
+            label={translations.strings.referral}
             labelPlacement="outside"
-            placeholder="Referral Source"
+            placeholder={translations.strings.referral}
             className="max-w-xs"
             name="referralSource"
             value={formData.referralSource}
@@ -234,9 +237,9 @@ export default function EditApplicationPage({
 
           <Input
             type="text"
-            label="Referral Contact Phone Number"
+            label={`${translations.strings.referral} ${translations.strings.phoneNumber}`}
             labelPlacement="outside"
-            placeholder="Referral Contact Phone Number"
+            placeholder={`${translations.strings.referral} ${translations.strings.phoneNumber}`}
             className="max-w-xs"
             name="referralContactPhoneNumber"
             value={formData.referralContactPhoneNumber}
@@ -245,9 +248,9 @@ export default function EditApplicationPage({
         </div>
         <Textarea
           isRequired
-          label="Volunteer Experience"
+          label={translations.strings.experiences}
           labelPlacement="outside"
-          placeholder="Describe your volunteer experience"
+          placeholder={translations.strings.experiences}
           className="w-full"
           name="volunteerExperience"
           value={formData.volunteerExperience}
@@ -255,9 +258,9 @@ export default function EditApplicationPage({
         />
 
         <Textarea
-          label="Skills and Expertise"
+          label={translations.strings.skills}
           labelPlacement="outside"
-          placeholder="Describe your skills and expertise"
+          placeholder={translations.strings.skills}
           className="w-full"
           name="skillsAndExpertise"
           value={formData.skillsAndExpertise}
@@ -265,9 +268,9 @@ export default function EditApplicationPage({
         />
 
         <Textarea
-          label="Motivation to Volunteer"
+          label={translations.strings.motivations}
           labelPlacement="outside"
-          placeholder="What motivates you to volunteer?"
+          placeholder={translations.strings.motivations}
           className="w-full"
           name="motivationToVolunteer"
           value={formData.motivationToVolunteer}
@@ -275,7 +278,7 @@ export default function EditApplicationPage({
         />
 
         <Button className="mt-10" type="submit">
-          Update Application
+          {translations.strings.edit} {translations.strings.apply}
         </Button>
       </form>
     </>

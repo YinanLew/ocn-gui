@@ -42,7 +42,7 @@ export default function WorkingHoursTable({
   const [columns, setColumns] = useState<TableColumnTy[]>([
     {
       name: `${translations.strings.firstName}`,
-      uid: "firstName",
+      uid: "userName",
       sortable: true,
     },
     { name: `${translations.strings.event}`, uid: "title", sortable: true },
@@ -73,7 +73,7 @@ export default function WorkingHoursTable({
     setColumns([
       {
         name: `${translations.strings.firstName}`,
-        uid: "firstName",
+        uid: "userName",
         sortable: true,
       },
       { name: `${translations.strings.event}`, uid: "title", sortable: true },
@@ -116,7 +116,7 @@ export default function WorkingHoursTable({
 
   const INITIAL_VISIBLE_COLUMNS = [
     "userName",
-    "eventTitle",
+    "title",
     "startTime",
     "endTime",
     "hours",
@@ -228,7 +228,9 @@ export default function WorkingHoursTable({
       const cellValue = app[columnKey as keyof EventEntry];
 
       switch (columnKey) {
-        case "eventTitle":
+        case "userName":
+          return <p>{app.userName}</p>;
+        case "title":
           return <p>{app.eventTitle}</p>;
         case "startTime":
           return (
