@@ -78,6 +78,16 @@ export default function EventPage({ params: { eventId } }: Params) {
     }
   };
 
+  const formatDescription = (text: string) => {
+    return text.split("\n").map((paragraph, index) =>
+      paragraph.trim() ? (
+        <p className="mb-4" key={index}>
+          {paragraph}
+        </p>
+      ) : null
+    );
+  };
+
   if (status === "loading") {
     return <div className={title()}>Loading...</div>;
   }
@@ -88,21 +98,45 @@ export default function EventPage({ params: { eventId } }: Params) {
 
   const isEventClosed = event?.status === "closed";
   const shouldShowApplication = !session && !isEventClosed;
+  console.log(event?.imageUrl);
 
   return (
-    <div>
-      <h1 className={title()}>{event?.title}</h1>
-      <h1>{event?.description}</h1>
-      <h1>{event?.location}</h1>
-      <h1>{formatDate(event?.releaseDate)}</h1>
-      <h1>{event?.status}</h1>
-      {isEventClosed ? (
-        <p className={title()}>{translations.strings.closed}</p>
-      ) : shouldShowApplication ? (
-        <ApplicationForm eventId={eventId} onSubmit={handleFormSubmit} />
-      ) : session ? (
-        <Button onClick={handleApplyClick}>{translations.strings.apply}</Button>
-      ) : null}
+    <div className="flex flex-col items-center w-full my-4 px-4">
+      {event?.imageUrl && (
+        <img
+          src={event.imageUrl}
+          alt="Event Image"
+          className="w-full max-w-md h-auto rounded-lg mb-4"
+        />
+      )}
+      <div className="w-4/5 text-center space-y-2">
+        <div className="w-full pb-8">
+          <h1 className={title()}>{event?.title}</h1>
+        </div>
+        <div className="w-full flex flex-row justify-between items-center pb-4">
+          <h2>
+            {translations.strings.location}: {event?.location}
+          </h2>
+          <h2>
+            {translations.strings.startDate}: {formatDate(event?.releaseDate)}
+          </h2>
+          <h2>
+            {translations.strings.status}: {event?.status}
+          </h2>
+        </div>
+        <div className="w-full text-justify">
+          {event && formatDescription(event.description)}
+        </div>
+        {isEventClosed ? (
+          <p className={title()}>{translations.strings.closed}</p>
+        ) : shouldShowApplication ? (
+          <ApplicationForm eventId={eventId} onSubmit={handleFormSubmit} />
+        ) : session ? (
+          <Button onClick={handleApplyClick}>
+            {translations.strings.apply}
+          </Button>
+        ) : null}
+      </div>
     </div>
   );
 }
