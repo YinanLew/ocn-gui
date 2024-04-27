@@ -11,6 +11,52 @@ import ApplicationForm from "@/components/applicationForm";
 import { useRouter } from "next/navigation";
 import { AuthRequiredError } from "@/lib/exceptions";
 import { submitApplication } from "@/lib/submitApplication";
+import {
+  EmailIcon,
+  FacebookIcon,
+  FacebookMessengerIcon,
+  GabIcon,
+  HatenaIcon,
+  InstapaperIcon,
+  LineIcon,
+  LinkedinIcon,
+  LivejournalIcon,
+  MailruIcon,
+  OKIcon,
+  PinterestIcon,
+  PocketIcon,
+  RedditIcon,
+  TelegramIcon,
+  TumblrIcon,
+  TwitterIcon,
+  ViberIcon,
+  VKIcon,
+  WeiboIcon,
+  WhatsappIcon,
+  WorkplaceIcon,
+  XIcon,
+  EmailShareButton,
+  FacebookShareButton,
+  GabShareButton,
+  HatenaShareButton,
+  InstapaperShareButton,
+  LineShareButton,
+  LinkedinShareButton,
+  LivejournalShareButton,
+  MailruShareButton,
+  OKShareButton,
+  PinterestShareButton,
+  PocketShareButton,
+  RedditShareButton,
+  TelegramShareButton,
+  TumblrShareButton,
+  TwitterShareButton,
+  ViberShareButton,
+  VKShareButton,
+  WhatsappShareButton,
+  WorkplaceShareButton,
+  WeiboShareButton,
+} from "react-share";
 
 export default function EventPage({ params: { eventId } }: Params) {
   const [event, setEvent] = useState<Event>();
@@ -124,6 +170,34 @@ export default function EventPage({ params: { eventId } }: Params) {
             {translations.strings.status}: {event?.status}
           </h2>
         </div>
+        <div className="flex justify-center space-x-4">
+          <WeiboShareButton
+            url={`${process.env.NEXT_PUBLIC_BASE_URL}/events/${eventId}`}
+            title={event?.title}
+            image={event?.imageUrl}
+          >
+            <WeiboIcon size={32} round />
+          </WeiboShareButton>
+          <TwitterShareButton
+            url={`${process.env.NEXT_PUBLIC_BASE_URL}/events/${eventId}`}
+            title={event?.title}
+          >
+            <XIcon size={32} round />
+          </TwitterShareButton>
+          <FacebookShareButton
+            url={`${process.env.NEXT_PUBLIC_BASE_URL}/events/${eventId}`}
+            title={event?.title}
+          >
+            <FacebookIcon size={32} round />
+          </FacebookShareButton>
+          <EmailShareButton
+            url={`${process.env.NEXT_PUBLIC_BASE_URL}/events/${eventId}`}
+            title={event?.title}
+          >
+            <EmailIcon size={32} round />
+          </EmailShareButton>
+        </div>
+
         <div className="w-full text-justify">
           {event && formatDescription(event.description)}
         </div>

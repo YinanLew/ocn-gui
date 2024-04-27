@@ -185,6 +185,13 @@ export type LocalizationStrings = {
   cancel: string;
   delConfirmQueHours: string;
   delConfirmQueApp: string;
+  homepageTitle: string;
+  homepageSub: string;
+  homepageListTitle: string;
+  homepageListBtn: string;
+  homepageStory: string;
+  howToJoin: string;
+  howToSub: string;
 };
 
 export type SiteConfig = {

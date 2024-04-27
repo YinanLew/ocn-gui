@@ -56,7 +56,14 @@
     "delConfirmQue": "你确定要删除这个活动吗？",
     "delConfirmQueHours": "你确定要删除这个志愿活动时长吗？",
     "delConfirmQueApp": "你确定要删除这个申请吗?",
-    "cancel": "取消"
+    "cancel": "取消",
+    "homepageTitle": "加入我们的志愿者行列！",
+    "homepageSub": "参与社区建设，助力公益活动，一同创造变革。",
+    "homepageListTitle": "即将举行的活动",
+    "homepageListBtn": "查看所有活动",
+    "homepageStory": "志愿者故事",
+    "howToJoin": "如何参与",
+    "howToSub": "我们的志愿者活动对所有人开放。点击下面的按钮浏览可申请的活动，加入我们的志愿者团队。"
   },
   "siteConfig": {
     "name": "Next.js + NextUI",

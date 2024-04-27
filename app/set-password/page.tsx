@@ -1,11 +1,12 @@
 "use client";
 import React, { useState } from "react";
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
 import { Input, Button } from "@nextui-org/react";
 import { setNewPassword } from "@/lib/setNewPassword"; // Make sure this path matches your project structure
 
 export default function SetPasswordPage() {
   const searchParams = useSearchParams();
+  const router = useRouter();
   const token = searchParams.get("token");
 
   const [newPassword, setNewPasswordState] = useState("");
@@ -44,8 +45,8 @@ export default function SetPasswordPage() {
     if (token) {
       try {
         await setNewPassword(token, newPassword);
-        alert("Password has been successfully reset.");
-        // Navigate to login or other appropriate page
+        // alert("Password has been successfully reset.");
+        router.push("/");
       } catch (error: any) {
         console.error("Error resetting password:", error);
         // Handle error (e.g., show message to user)

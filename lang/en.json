@@ -56,7 +56,14 @@
     "delConfirmQue": "Are you sure you want to delete this event?",
     "delConfirmQueHours": "Are you sure you want to delete this working hour?",
     "delConfirmQueApp": "Are you sure you want to delete this application?",
-    "cancel": "Cancel"
+    "cancel": "Cancel",
+    "homepageTitle": "Join Our Volunteer Ranks!",
+    "homepageSub": "Participate in community development, support charitable activities, and create change together.",
+    "homepageListTitle": "Upcoming Events",
+    "homepageListBtn": "View All Events",
+    "homepageStory": "Volunteer Stories",
+    "howToJoin": "How to Participate",
+    "howToSub": "Our volunteer activities are open to all. Click below to view available events and join our team."
   },
   "siteConfig": {
     "name": "Next.js + NextUI",

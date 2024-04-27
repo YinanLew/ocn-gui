@@ -7,7 +7,7 @@ const error = ({ error, reset }: { error: Error; reset: () => void }) => {
       {error.message || "Something went wrong"}
       {error.message === "Your session has expired. Please log in again." ||
       "Access denied: Not an admin." ? (
-        <Link href="/login">Log In</Link>
+        <Link href="/api/auth/signin">Log In</Link>
       ) : (
         <button onClick={reset}>Try again</button>
       )}

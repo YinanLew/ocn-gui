@@ -20,7 +20,6 @@ import {
 import { Link } from "@nextui-org/link";
 import { Logo } from "@/components/icons";
 import { formatName } from "@/utils/formatName";
-import { SiteConfig } from "@/types";
 
 type UserControlsProps = {
   session: Session | null;
@@ -31,7 +30,23 @@ export function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { translations } = useLanguage();
   // const siteConfig = translations.siteConfig as SiteConfig;
+  const getNavItems = () => {
+    const navItems = [];
+    navItems.push(translations.siteConfig.navItems[0]); // Events
 
+    if (session) {
+      if (session.user.role === "user") {
+        navItems.push(translations.siteConfig.navItems[1]); // My Applications
+      }
+      if (session.user.role === "admin") {
+        return translations.siteConfig.navItems; // All items
+      }
+    }
+
+    return navItems;
+  };
+  const desktopNavItems = getNavItems();
+  const mobileNavItems = getNavItems();
   // console.log(translations)
   const UserAuth: React.FC<UserControlsProps> = ({ session }) => {
     return (
@@ -76,22 +91,20 @@ export function Navbar() {
           </NextLink>
         </NavbarBrand>
         <ul className="hidden lg:flex gap-4 justify-start ml-2">
-          {translations.siteConfig.navItems.map(
-            (item: { label: string; href: string }) => (
-              <NavbarItem key={item.href}>
-                <NextLink
-                  className={clsx(
-                    linkStyles({ color: "foreground" }),
-                    "data-[active=true]:text-primary data-[active=true]:font-medium"
-                  )}
-                  color="foreground"
-                  href={item.href}
-                >
-                  {item.label}
-                </NextLink>
-              </NavbarItem>
-            )
-          )}
+          {desktopNavItems.map((item: { label: string; href: string }) => (
+            <NavbarItem key={item.href}>
+              <NextLink
+                className={clsx(
+                  linkStyles({ color: "foreground" }),
+                  "data-[active=true]:text-primary data-[active=true]:font-medium"
+                )}
+                color="foreground"
+                href={item.href}
+              >
+                {item.label}
+              </NextLink>
+            </NavbarItem>
+          ))}
         </ul>
       </NavbarContent>
 
@@ -118,7 +131,7 @@ export function Navbar() {
 
       <NavbarMenu>
         <div className="mx-4 mt-2 flex flex-col gap-2">
-          {translations.siteConfig.navMenuItems.map((item, index) => (
+          {mobileNavItems.map((item, index) => (
             <NavbarMenuItem key={`${item}-${index}`}>
               <Link color="foreground" href={item.href} size="lg">
                 {item.label}
