@@ -63,7 +63,10 @@
     "homepageListBtn": "View All Events",
     "homepageStory": "Volunteer Stories",
     "howToJoin": "How to Participate",
-    "howToSub": "Our volunteer activities are open to all. Click below to view available events and join our team."
+    "howToSub": "Our volunteer activities are open to all. Click below to view available events and join our team.",
+    "password": "Password",
+    "forgotPassword": "Forgot Password?",
+    "resetPassword": "Send Reset Link"
   },
   "siteConfig": {
     "name": "Next.js + NextUI",

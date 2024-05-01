@@ -192,6 +192,9 @@ export type LocalizationStrings = {
   homepageStory: string;
   howToJoin: string;
   howToSub: string;
+  password: string;
+  forgotPassword: string;
+  resetPassword: string;
 };
 
 export type SiteConfig = {

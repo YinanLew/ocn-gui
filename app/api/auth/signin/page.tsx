@@ -1,6 +1,7 @@
 "use client";
 import { signIn, getCsrfToken } from "next-auth/react";
 import { useState } from "react";
+import { useLanguage } from "@/utils/languageContext";
 
 interface SignInProps {
   csrfToken: string;
@@ -14,6 +15,7 @@ export default function SignIn({ csrfToken }: SignInProps) {
   const [resetError, setResetError] = useState<string>();
   const [isResettingPassword, setIsResettingPassword] =
     useState<boolean>(false);
+  const { translations } = useLanguage();
 
   const handleSignIn = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -93,7 +95,7 @@ export default function SignIn({ csrfToken }: SignInProps) {
             type="email"
             value={resetEmail}
             onChange={(e) => setResetEmail(e.target.value)}
-            placeholder="Enter your email"
+            placeholder={translations.strings.email}
             required
             className="mb-4 p-2 border rounded"
           />
@@ -101,7 +103,7 @@ export default function SignIn({ csrfToken }: SignInProps) {
             type="submit"
             className="p-2 bg-blue-500 text-white rounded hover:bg-blue-600"
           >
-            Send Reset Link
+            {translations.strings.resetPassword}
           </button>
           <button
             type="button"
@@ -112,7 +114,7 @@ export default function SignIn({ csrfToken }: SignInProps) {
             }}
             className="mt-2 p-2 bg-foreground-300 rounded hover:bg-gray-400"
           >
-            Cancel
+            {translations.strings.cancel}
           </button>
         </form>
       ) : (
@@ -130,13 +132,13 @@ export default function SignIn({ csrfToken }: SignInProps) {
             htmlFor="email"
             className="flex flex-col gap-1 text-foreground"
           >
-            Email:
+            {translations.strings.email}:
             <input
               type="email"
               id="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              placeholder="your-cool-email"
+              placeholder={translations.strings.email}
               required
               className="w-full px-4 py-2 border rounded-md"
             />
@@ -146,13 +148,13 @@ export default function SignIn({ csrfToken }: SignInProps) {
             htmlFor="password"
             className="flex flex-col gap-1 text-foreground"
           >
-            Password:
+            {translations.strings.password}:
             <input
               type="password"
               id="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              placeholder="your-awesome-password"
+              placeholder={translations.strings.password}
               required
               className="w-full px-4 py-2 border rounded-md"
             />
@@ -162,7 +164,7 @@ export default function SignIn({ csrfToken }: SignInProps) {
             type="submit"
             className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
           >
-            Sign in
+            {translations.strings.login}
           </button>
           <button
             type="button"
@@ -173,7 +175,7 @@ export default function SignIn({ csrfToken }: SignInProps) {
             }}
             className="mt-2 p-2 bg-foreground-300 rounded hover:bg-gray-400"
           >
-            Forgot Password?
+            {translations.strings.forgotPassword}
           </button>
         </form>
       )}
