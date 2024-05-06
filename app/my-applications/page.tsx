@@ -4,7 +4,7 @@ import { useSession, signOut } from "next-auth/react";
 import { title } from "@/components/primitives";
 import { AuthRequiredError } from "@/lib/exceptions";
 import { getUserApplications } from "@/lib/getUserApplications";
-import { EventWorkingHours } from "@/types";
+import { EventWorkingHours, FetchDataFunction } from "@/types";
 import AppsTable from "@/components/myAppsTable";
 import { useLanguage } from "@/utils/languageContext";
 
@@ -17,26 +17,27 @@ export default function MyApplicationsPage() {
   >([]);
   const { translations } = useLanguage();
 
-  useEffect(() => {
-    async function fetchData() {
-      if (status === "authenticated" && token) {
-        try {
-          const fetchedData = await getUserApplications(token);
-          setEventsWorkingHours(fetchedData.data);
-        } catch (error: any) {
-          console.error("Error fetching applications:", error.message);
-          if (error.message === "Token expired") {
-            signOut({ redirect: false });
-            setError("Your session has expired. Please log in again.");
-          } else {
-            setError("Failed to fetch applications");
-          }
+  const fetchData: FetchDataFunction = async () => {
+    if (status === "authenticated" && token) {
+      try {
+        const fetchedData = await getUserApplications(token);
+        setEventsWorkingHours(fetchedData.data);
+      } catch (error: any) {
+        console.error("Error fetching applications:", error.message);
+        if (error.message === "Token expired") {
+          signOut({ redirect: false });
+          setError("Your session has expired. Please log in again.");
+        } else {
+          setError("Failed to fetch applications");
         }
-      } else if (status === "unauthenticated") {
-        // If the session status is unauthenticated, set an error prompting to authenticate.
-        setError("Authentication required.");
       }
+    } else if (status === "unauthenticated") {
+      // If the session status is unauthenticated, set an error prompting to authenticate.
+      setError("Authentication required.");
     }
+  };
+
+  useEffect(() => {
     fetchData();
   }, [token, status]);
 
@@ -51,7 +52,7 @@ export default function MyApplicationsPage() {
   return (
     <div>
       <h1 className={title()}>{translations.strings.myApps}</h1>
-      <AppsTable apps={eventsWorkingHours} />
+      <AppsTable apps={eventsWorkingHours} fetchData={fetchData} />
     </div>
   );
 }

@@ -39,6 +39,7 @@ export default function Home() {
         <Link href="https://oakvillechinesenetwork.ca/">
           <img
             src="https://i.imgur.com/Z3y7oen.png"
+            // src="logo_transparent.png"
             alt="志愿者在工作"
             className="rounded-lg shadow-lg"
           />
@@ -46,7 +47,7 @@ export default function Home() {
       </div>
 
       <div className="flex flex-wrap justify-center gap-4 mb-20">
-        <div className="bg-white p-6 rounded-lg shadow-md sm:w-5/12">
+        <div className="p-6 rounded-lg shadow-md sm:w-5/12">
           <h2 className="text-2xl font-semibold">
             {translations.strings.homepageListTitle}
           </h2>
@@ -74,7 +75,7 @@ export default function Home() {
           </Link> */}
         </div>
 
-        <div className="bg-white p-6 rounded-lg shadow-md sm:w-6/12 md:w-11/20">
+        <div className="p-6 rounded-lg shadow-md sm:w-6/12 md:w-11/20">
           <h2 className="text-2xl font-semibold">
             {translations.strings.howToJoin}
           </h2>

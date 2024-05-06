@@ -66,7 +66,8 @@
     "howToSub": "我们的志愿者活动对所有人开放。点击下面的按钮浏览可申请的活动，加入我们的志愿者团队。",
     "password": "密码",
     "forgotPassword": "忘记密码",
-    "resetPassword": "发送重置邮件"
+    "resetPassword": "发送重置邮件",
+    "totalUnissuedHours": "未提交时间"
   },
   "siteConfig": {
     "name": "Next.js + NextUI",

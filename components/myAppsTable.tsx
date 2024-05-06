@@ -22,7 +22,11 @@ import {
   ChipProps,
   Link,
 } from "@nextui-org/react";
-import { AppsTableProps, EventWorkingHours, TableColumnTy } from "@/types";
+import {
+  AppsTableExtendedProps,
+  EventWorkingHours,
+  TableColumnTy,
+} from "@/types";
 import { VerticalDotsIcon } from "./verticalDotsIcon";
 import { ChevronDownIcon } from "./chevronDownIcon";
 import { SearchIcon } from "./searchIcon";
@@ -31,7 +35,7 @@ import { useSession } from "next-auth/react";
 import { formatDate } from "@/utils/formatDate";
 import { useLanguage } from "@/utils/languageContext";
 
-export default function AppsTable({ apps }: AppsTableProps) {
+export default function AppsTable({ apps, fetchData }: AppsTableExtendedProps) {
   const { data: session, status } = useSession();
   const { translations } = useLanguage();
 
@@ -44,6 +48,11 @@ export default function AppsTable({ apps }: AppsTableProps) {
     {
       name: `${translations.strings.totalWorkingHours}`,
       uid: "totalHours",
+      sortable: true,
+    },
+    {
+      name: `${translations.strings.totalUnissuedHours}`,
+      uid: "totalUnissuedHours",
       sortable: true,
     },
     {
@@ -70,6 +79,11 @@ export default function AppsTable({ apps }: AppsTableProps) {
       {
         name: `${translations.strings.totalWorkingHours}`,
         uid: "totalHours",
+        sortable: true,
+      },
+      {
+        name: `${translations.strings.totalUnissuedHours}`,
+        uid: "totalUnissuedHours",
         sortable: true,
       },
       {
@@ -114,6 +128,7 @@ export default function AppsTable({ apps }: AppsTableProps) {
   const INITIAL_VISIBLE_COLUMNS = [
     "eventTitle",
     "totalHours",
+    "totalUnissuedHours",
     "appCreatedAt",
     "status",
     "certificateStatus",
@@ -188,6 +203,8 @@ export default function AppsTable({ apps }: AppsTableProps) {
     });
   }, [sortDescriptor, items]);
 
+  // In AppsTable component
+
   const submitCertificateApplication = async (
     eventId: string,
     token: string | undefined
@@ -207,6 +224,7 @@ export default function AppsTable({ apps }: AppsTableProps) {
 
         if (response.ok) {
           alert("Certificate application submitted successfully.");
+          fetchData();
         } else {
           const error = await response.json();
           alert(`Error submitting certificate application: ${error.message}`);
@@ -261,10 +279,13 @@ export default function AppsTable({ apps }: AppsTableProps) {
       switch (columnKey) {
         case "eventTitle":
           return <p>{app.eventTitle}</p>;
+        case "totalUnissuedHours":
+          return <div className="flex flex-col">{app.totalUnissuedHours}</div>;
         case "appCreatedAt":
           return (
             <div className="flex flex-col">{formatDate(app.appCreatedAt)}</div>
           );
+
         case "status":
           return (
             <Chip

@@ -101,6 +101,7 @@ export interface EventWorkingHours {
   _id: string;
   eventTitle: string;
   totalHours: number;
+  totalUnissuedHours: string;
   status: string;
   appCreatedAt: string;
   certificateStatus: string;
@@ -108,6 +109,16 @@ export interface EventWorkingHours {
 
 export interface AppsTableProps {
   apps: EventWorkingHours[];
+}
+export type UpdateStatusProps = (
+  eventId: string,
+  newCertificateStatus: string
+) => void;
+
+export type FetchDataFunction = () => Promise<void>;
+
+export interface AppsTableExtendedProps extends AppsTableProps {
+  fetchData: FetchDataFunction;
 }
 
 export interface EventEntry {
@@ -195,6 +206,7 @@ export type LocalizationStrings = {
   password: string;
   forgotPassword: string;
   resetPassword: string;
+  totalUnissuedHours: string;
 };
 
 export type SiteConfig = {

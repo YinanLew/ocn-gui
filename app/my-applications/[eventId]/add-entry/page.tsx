@@ -36,6 +36,14 @@ export default function AddHoursPage({ params: { eventId } }: Params) {
       throw new AuthRequiredError();
     }
 
+    const startTime = new Date(formData.startTime || "");
+    const endTime = new Date(formData.endTime || "");
+
+    if (startTime >= endTime) {
+      setError("Start time must be earlier than end time.");
+      return;
+    }
+
     try {
       await submitWorkingHours(formData, token, eventId);
       router.push(`/my-applications/${eventId}`); // Handle success (e.g., show a success message, redirect, etc.)
