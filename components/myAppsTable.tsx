@@ -107,8 +107,8 @@ export default function AppsTable({ apps, fetchData }: AppsTableExtendedProps) {
 
   const statusOptions = [
     { name: `${translations.strings.verified}`, uid: "verified" },
-    { name: `${translations.strings.paused}`, uid: "pending" },
-    { name: `${translations.strings.closedStatus}`, uid: "rejected" },
+    { name: `${translations.strings.pending}`, uid: "pending" },
+    { name: `${translations.strings.rejected}`, uid: "rejected" },
     { name: `${translations.strings.notSubmitted}`, uid: "notSubmitted" },
     { name: `${translations.strings.submitted}`, uid: "submitted" },
     { name: `${translations.strings.approved}`, uid: "approved" },

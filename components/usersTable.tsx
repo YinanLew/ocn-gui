@@ -174,8 +174,8 @@ export default function UsersTableTemp({
 
   const statusOptions = [
     { name: `${translations.strings.verified}`, uid: "verified" },
-    { name: `${translations.strings.paused}`, uid: "pending" },
-    { name: `${translations.strings.closedStatus}`, uid: "rejected" },
+    { name: `${translations.strings.pending}`, uid: "pending" },
+    { name: `${translations.strings.rejected}`, uid: "rejected" },
     // { name: "Not Submitted", uid: "notSubmitted" },
     // { name: "Submitted", uid: "submitted" },
     // { name: "Approved", uid: "approved" },

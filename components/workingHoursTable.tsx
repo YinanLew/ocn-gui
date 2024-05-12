@@ -115,8 +115,8 @@ export default function WorkingHoursTable({
 
   const statusOptions = [
     { name: "Verified", uid: "verified" },
-    { name: "Paused", uid: "pending" },
-    { name: "Closed", uid: "rejected" },
+    { name: "Pending", uid: "pending" },
+    { name: "Rejected", uid: "rejected" },
     // Add other statuses as needed
   ];
 
