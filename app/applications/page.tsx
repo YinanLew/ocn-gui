@@ -96,6 +96,8 @@ export default function ApplicationsPage() {
     throw new Error(error);
   }
 
+  console.log(applications);
+
   return (
     <div>
       <h1 className={title()}>{translations.strings.allApps}</h1>

@@ -99,6 +99,16 @@ export default function UsersTableTemp({
       uid: "writtenLanguage",
       sortable: true,
     },
+    {
+      name: `${translations.strings.totalWorkingHours}`,
+      uid: "totalWorkingHours",
+      sortable: true,
+    },
+    {
+      name: `${translations.strings.totalUnissuedHours}`,
+      uid: "totalUnissuedHours",
+      sortable: true,
+    },
     { name: `${translations.strings.status}`, uid: "status", sortable: true },
 
     {
@@ -157,6 +167,16 @@ export default function UsersTableTemp({
         uid: "writtenLanguage",
         sortable: true,
       },
+      {
+        name: `${translations.strings.totalWorkingHours}`,
+        uid: "totalWorkingHours",
+        sortable: true,
+      },
+      {
+        name: `${translations.strings.totalUnissuedHours}`,
+        uid: "totalUnissuedHours",
+        sortable: true,
+      },
       { name: `${translations.strings.status}`, uid: "status", sortable: true },
 
       {
@@ -202,6 +222,8 @@ export default function UsersTableTemp({
     "createdAt",
     "spokenLanguage",
     "writtenLanguage",
+    "totalWorkingHours",
+    "totalUnissuedHours",
     "status",
     "certificateStatus",
     "actions",
@@ -389,6 +411,16 @@ export default function UsersTableTemp({
             <div className="flex flex-col">
               {formatDate(application.createdAt)}
             </div>
+          );
+        case "totalUnissuedHours":
+          return (
+            <div className="flex flex-col">
+              {application.totalUnissuedHours}
+            </div>
+          );
+        case "totalWorkingHours":
+          return (
+            <div className="flex flex-col">{application.totalWorkingHours}</div>
           );
         case "certificateStatus":
           return (

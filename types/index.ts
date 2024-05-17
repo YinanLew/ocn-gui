@@ -57,6 +57,8 @@ export interface FlatEvent {
   eventTitle: string;
   _id: string;
   certificateStatus: string;
+  totalHours: string;
+  totalUnissuedHours: string;
 }
 
 export interface OriginalApplication {
@@ -80,6 +82,8 @@ export interface FlattenedApplication
   eventTitle: string;
   eventUniqueId: string;
   certificateStatus: string;
+  totalWorkingHours: string;
+  totalUnissuedHours: string;
 }
 
 export interface UsersTableTempProps {
