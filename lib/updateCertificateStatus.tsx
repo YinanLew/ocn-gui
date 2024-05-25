@@ -6,7 +6,7 @@ export const updateCertificateStatus = async (
 ) => {
   try {
     const res = await fetch(
-      `http://localhost:8500/working-hours/updateCertificateStatus`,
+      `https://ocn-data.vercel.app/working-hours/updateCertificateStatus`,
       {
         method: "POST",
         headers: {

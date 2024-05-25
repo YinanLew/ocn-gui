@@ -1,6 +1,6 @@
 export const getAllApplications = async (token: string): Promise<any> => {
   try {
-    const res = await fetch(`http://localhost:8500/application/`, {
+    const res = await fetch(`https://ocn-data.vercel.app/application/`, {
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,

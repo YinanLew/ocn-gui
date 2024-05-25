@@ -16,7 +16,7 @@ export const submitApplication = async (
   }
 
   try {
-    const res = await fetch("http://localhost:8500/application/submit", {
+    const res = await fetch("https://ocn-data.vercel.app/application/submit", {
       method: "POST",
       headers,
       body: JSON.stringify(applicationData),

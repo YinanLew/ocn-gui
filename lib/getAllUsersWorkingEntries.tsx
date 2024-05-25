@@ -2,7 +2,7 @@ export const getAllUsersWorkingEntries = async (
   token: string
 ): Promise<any> => {
   try {
-    const res = await fetch(`http://localhost:8500/working-hours/`, {
+    const res = await fetch(`https://ocn-data.vercel.app/working-hours/`, {
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,

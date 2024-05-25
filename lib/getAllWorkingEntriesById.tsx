@@ -4,7 +4,7 @@ export const getAllWorkingEntriesById = async (
 ): Promise<any> => {
   try {
     const res = await fetch(
-      `http://localhost:8500/working-hours/working-entries/${eventId}`,
+      `https://ocn-data.vercel.app/working-hours/working-entries/${eventId}`,
       {
         headers: {
           "Content-Type": "application/json",

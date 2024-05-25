@@ -7,7 +7,7 @@ export const updateWorkingEntryById = async (
 ): Promise<any> => {
   try {
     const res = await fetch(
-      `http://localhost:8500/working-hours/working-entry/${id}`,
+      `https://ocn-data.vercel.app/working-hours/working-entry/${id}`,
       {
         method: "PUT",
         headers: {

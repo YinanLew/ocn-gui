@@ -1,6 +1,6 @@
 export const createEvent = async (formData: any, token: string) => {
   try {
-    const response = await fetch("http://localhost:8500/events/create", {
+    const response = await fetch("https://ocn-data.vercel.app/events/create", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

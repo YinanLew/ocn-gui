@@ -212,7 +212,7 @@ export default function AppsTable({ apps, fetchData }: AppsTableExtendedProps) {
     if (token) {
       try {
         const response = await fetch(
-          `http://localhost:8500/working-hours/submit-certificate/${eventId}`,
+          `https://ocn-data.vercel.app/working-hours/submit-certificate/${eventId}`,
           {
             method: "POST",
             headers: {

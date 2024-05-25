@@ -1,7 +1,7 @@
 export const getUserApplications = async (token: string): Promise<any> => {
   try {
     const res = await fetch(
-      `http://localhost:8500/working-hours/my-applications`,
+      `https://ocn-data.vercel.app/working-hours/my-applications`,
       {
         headers: {
           "Content-Type": "application/json",

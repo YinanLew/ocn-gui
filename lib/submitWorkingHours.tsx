@@ -7,7 +7,7 @@ export const submitWorkingHours = async (
 ): Promise<any> => {
   try {
     const res = await fetch(
-      `http://localhost:8500/working-hours/submit-entry/${eventId}`,
+      `https://ocn-data.vercel.app/working-hours/submit-entry/${eventId}`,
       {
         method: "POST",
         headers: {

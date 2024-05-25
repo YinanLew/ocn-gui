@@ -4,7 +4,7 @@ export const updateEvent = async (
   eventData: EventFormData,
   token: string
 ) => {
-  const res = await fetch(`http://localhost:8500/events/edit/${eventId}`, {
+  const res = await fetch(`https://ocn-data.vercel.app/events/edit/${eventId}`, {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",
