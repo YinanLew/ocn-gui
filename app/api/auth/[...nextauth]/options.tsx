@@ -18,7 +18,7 @@ export const options: NextAuthOptions = {
         },
       },
       async authorize(credentials) {
-        const res = await fetch("https://ocn-data.vercel.app/users/login", {
+        const res = await fetch("https://ocn-data.onrender.com/users/login", {
           method: "POST",
           body: JSON.stringify(credentials),
           headers: { "Content-Type": "application/json" },

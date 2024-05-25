@@ -49,7 +49,7 @@ export default function WorkingHoursPage() {
     }
     try {
       const response = await fetch(
-        `https://ocn-data.vercel.app/working-hours/working-entry/delete/${currentEventId}`,
+        `https://ocn-data.onrender.com/working-hours/working-entry/delete/${currentEventId}`,
         {
           method: "DELETE",
           headers: {

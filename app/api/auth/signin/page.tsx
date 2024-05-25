@@ -51,7 +51,7 @@ export default function SignIn() {
     event.preventDefault();
     try {
       const response = await fetch(
-        "https://ocn-data.vercel.app/users/reset-password",
+        "https://ocn-data.onrender.com/users/reset-password",
         {
           method: "POST",
           headers: {

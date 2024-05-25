@@ -3,7 +3,7 @@ export const setNewPassword = async (
   newPassword: string
 ): Promise<string> => {
   try {
-    const response = await fetch(`https://ocn-data.vercel.app/users/set-password`, {
+    const response = await fetch(`https://ocn-data.onrender.com/users/set-password`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

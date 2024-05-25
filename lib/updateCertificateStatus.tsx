@@ -6,7 +6,7 @@ export const updateCertificateStatus = async (
 ) => {
   try {
     const res = await fetch(
-      `https://ocn-data.vercel.app/working-hours/updateCertificateStatus`,
+      `https://ocn-data.onrender.com/working-hours/updateCertificateStatus`,
       {
         method: "POST",
         headers: {

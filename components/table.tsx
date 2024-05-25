@@ -249,7 +249,7 @@ export default function TableTemp() {
     }
     try {
       const response = await fetch(
-        `https://ocn-data.vercel.app/events/delete/${currentEventId}`,
+        `https://ocn-data.onrender.com/events/delete/${currentEventId}`,
         {
           method: "DELETE",
           headers: {

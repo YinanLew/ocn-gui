@@ -5,7 +5,7 @@ export const updateApplicationByUniqueId = async (
   token: string | undefined
 ) => {
   const res = await fetch(
-    `https://ocn-data.vercel.app/application/edit/${eventUniqueId}`,
+    `https://ocn-data.onrender.com/application/edit/${eventUniqueId}`,
     {
       method: "PUT",
       headers: {

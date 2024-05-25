@@ -4,7 +4,7 @@ export const getApplicationByUniqueId = async (
 ): Promise<any> => {
   try {
     const res = await fetch(
-      `https://ocn-data.vercel.app/application/event-sub/${eventUniqueId}`,
+      `https://ocn-data.onrender.com/application/event-sub/${eventUniqueId}`,
       {
         headers: {
           "Content-Type": "application/json",

@@ -314,7 +314,7 @@ export default function UsersTableTemp({
 
     try {
       const response = await fetch(
-        `https://ocn-data.vercel.app/application/delete/${eventId}/${eventObjectId}`,
+        `https://ocn-data.onrender.com/application/delete/${eventId}/${eventObjectId}`,
         {
           method: "DELETE",
           headers: {
