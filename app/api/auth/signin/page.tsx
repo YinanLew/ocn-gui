@@ -1,13 +1,10 @@
 "use client";
 import { signIn, getCsrfToken } from "next-auth/react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useLanguage } from "@/utils/languageContext";
 
-interface SignInProps {
-  csrfToken: string;
-}
-
-export default function SignIn({ csrfToken }: SignInProps) {
+export default function SignIn() {
+  const [csrfToken, setCsrfToken] = useState<string | null>(null);
   const [email, setEmail] = useState("");
   const [resetEmail, setResetEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -16,6 +13,14 @@ export default function SignIn({ csrfToken }: SignInProps) {
   const [isResettingPassword, setIsResettingPassword] =
     useState<boolean>(false);
   const { translations } = useLanguage();
+
+  useEffect(() => {
+    const fetchCsrfToken = async () => {
+      const token = await getCsrfToken();
+      setCsrfToken(token ?? null); // Ensure csrfToken is set to null if undefined
+    };
+    fetchCsrfToken();
+  }, []);
 
   const handleSignIn = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -122,7 +127,11 @@ export default function SignIn({ csrfToken }: SignInProps) {
           onSubmit={handleSignIn}
           className="flex flex-col w-full max-w-md p-8 rounded-lg shadow-md space-y-4"
         >
-          <input name="csrfToken" type="hidden" defaultValue={csrfToken} />
+          <input
+            name="csrfToken"
+            type="hidden"
+            defaultValue={csrfToken ?? ""}
+          />
 
           {error && (
             <div className="text-red-500 text-center mb-4">{error}</div>
@@ -181,11 +190,4 @@ export default function SignIn({ csrfToken }: SignInProps) {
       )}
     </div>
   );
-}
-
-export async function loader() {
-  const csrfToken = await getCsrfToken();
-  return {
-    props: { csrfToken },
-  };
 }
