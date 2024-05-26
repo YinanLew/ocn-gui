@@ -42,7 +42,7 @@ export default function RootLayout({
       >
         <AuthProvider>
           <LanguageProvider>
-            <Providers themeProps={{ attribute: "class", defaultTheme: "dark" }}>
+            <Providers themeProps={{ attribute: "class", defaultTheme: "white" }}>
               <div className="relative flex flex-col h-screen">
                 <Navbar />
                 <main className="container mx-auto max-w-7xl px-6 flex-grow">
