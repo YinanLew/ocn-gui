@@ -82,11 +82,13 @@ export default function WorkingHoursPage() {
   return (
     <div>
       <h1 className={title()}>{translations.strings.workingHours}</h1>
-      <WorkingHoursTable
+      <div className="mt-2">
+     <WorkingHoursTable
         apps={allEventEntries}
         eventId={""}
         handleDeleteEntry={handleDeleteEntry}
       />
+      </div>
     </div>
   );
 }

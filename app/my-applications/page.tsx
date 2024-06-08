@@ -52,7 +52,9 @@ export default function MyApplicationsPage() {
   return (
     <div>
       <h1 className={title()}>{translations.strings.myApps}</h1>
-      <AppsTable apps={eventsWorkingHours} fetchData={fetchData} />
+      <div className="mt-2">
+        <AppsTable apps={eventsWorkingHours} fetchData={fetchData} />
+      </div>
     </div>
   );
 }

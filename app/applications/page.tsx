@@ -99,12 +99,14 @@ export default function ApplicationsPage() {
   return (
     <div>
       <h1 className={title()}>{translations.strings.allApps}</h1>
-      <UsersTableTemp
-        applications={applications}
-        onRemoveApplication={handleRemoveApplication}
-        onIssueCertificate={issueCertificate}
-        onRejectCertificate={rejectCertificate}
-      />
+      <div className="mt-2">
+        <UsersTableTemp
+          applications={applications}
+          onRemoveApplication={handleRemoveApplication}
+          onIssueCertificate={issueCertificate}
+          onRejectCertificate={rejectCertificate}
+        />
+      </div>
     </div>
   );
 }

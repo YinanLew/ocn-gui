@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import { title } from "@/components/primitives";
 import TableTemp from "@/components/table";
 import { useLanguage } from "@/utils/languageContext";
@@ -9,7 +9,9 @@ export default function EventsPage() {
   return (
     <div>
       <h1 className={title()}>{translations.strings.event}</h1>
-      <TableTemp />
+      <div className="mt-2">
+        <TableTemp />
+      </div>
     </div>
   );
 }
