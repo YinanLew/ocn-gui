@@ -67,7 +67,9 @@
     "password": "密码",
     "forgotPassword": "忘记密码",
     "resetPassword": "发送重置邮件",
-    "totalUnissuedHours": "未提交时间"
+    "totalUnissuedHours": "未提交时间",
+    "address": "地址",
+    "referralNumber": "推荐人电话"
   },
   "siteConfig": {
     "name": "Next.js + NextUI",

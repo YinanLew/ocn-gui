@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Input, Button, Textarea } from "@nextui-org/react";
 import { ApplicationFormData } from "@/types";
+import { useLanguage } from "@/utils/languageContext";
 
 type Props = {
   eventId: string;
@@ -8,6 +9,8 @@ type Props = {
 };
 
 const ApplicationForm: React.FC<Props> = ({ eventId, onSubmit }) => {
+  const { translations } = useLanguage();
+
   const [formData, setFormData] = useState<ApplicationFormData>({
     firstName: "",
     lastName: "",
@@ -90,9 +93,9 @@ const ApplicationForm: React.FC<Props> = ({ eventId, onSubmit }) => {
         <Input
           isRequired
           type="text"
-          label="First Name"
+          label={translations.strings.firstName}
           labelPlacement="outside"
-          placeholder="First Name"
+          placeholder={translations.strings.firstName}
           className="max-w-xs"
           name="firstName"
           value={formData.firstName}
@@ -104,9 +107,9 @@ const ApplicationForm: React.FC<Props> = ({ eventId, onSubmit }) => {
         <Input
           isRequired
           type="text"
-          label="Last Name"
+          label={translations.strings.lastName}
           labelPlacement="outside"
-          placeholder="Last Name"
+          placeholder={translations.strings.lastName}
           className="max-w-xs"
           name="lastName"
           value={formData.lastName}
@@ -118,9 +121,9 @@ const ApplicationForm: React.FC<Props> = ({ eventId, onSubmit }) => {
         <Input
           isRequired
           type="text"
-          label="Address"
+          label={translations.strings.address}
           labelPlacement="outside"
-          placeholder="Address"
+          placeholder={translations.strings.address}
           className="max-w-xs"
           name="address"
           value={formData.address}
@@ -133,9 +136,9 @@ const ApplicationForm: React.FC<Props> = ({ eventId, onSubmit }) => {
         <Input
           isRequired
           type="email"
-          label="Email"
+          label={translations.strings.email}
           labelPlacement="outside"
-          placeholder="Email"
+          placeholder={translations.strings.email}
           className="max-w-xs"
           name="email"
           value={formData.email}
@@ -147,9 +150,9 @@ const ApplicationForm: React.FC<Props> = ({ eventId, onSubmit }) => {
         <Input
           isRequired
           type="text"
-          label="Phone Number"
+          label={translations.strings.phoneNumber}
           labelPlacement="outside"
-          placeholder="Phone Number"
+          placeholder={translations.strings.phoneNumber}
           className="max-w-xs"
           name="phoneNumber"
           value={formData.phoneNumber}
@@ -161,9 +164,9 @@ const ApplicationForm: React.FC<Props> = ({ eventId, onSubmit }) => {
         <Input
           isRequired
           type="text"
-          label="Spoken Language"
+          label={translations.strings.spokenLanguage}
           labelPlacement="outside"
-          placeholder="Spoken Language"
+          placeholder={translations.strings.spokenLanguage}
           className="max-w-xs"
           name="spokenLanguage"
           value={formData.spokenLanguage}
@@ -176,9 +179,9 @@ const ApplicationForm: React.FC<Props> = ({ eventId, onSubmit }) => {
         <Input
           isRequired
           type="text"
-          label="Written Language"
+          label={translations.strings.writtenLanguage}
           labelPlacement="outside"
-          placeholder="Written Language"
+          placeholder={translations.strings.writtenLanguage}
           className="max-w-xs"
           name="writtenLanguage"
           value={formData.writtenLanguage}
@@ -189,9 +192,9 @@ const ApplicationForm: React.FC<Props> = ({ eventId, onSubmit }) => {
 
         <Input
           type="text"
-          label="Referral Source"
+          label={translations.strings.referral}
           labelPlacement="outside"
-          placeholder="Referral Source"
+          placeholder={translations.strings.referral}
           className="max-w-xs"
           name="referralSource"
           value={formData.referralSource}
@@ -200,9 +203,9 @@ const ApplicationForm: React.FC<Props> = ({ eventId, onSubmit }) => {
 
         <Input
           type="text"
-          label="Referral Contact Phone Number"
+          label={translations.strings.referralNumber}
           labelPlacement="outside"
-          placeholder="Referral Contact Phone Number"
+          placeholder={translations.strings.referralNumber}
           className="max-w-xs"
           name="referralContactPhoneNumber"
           value={formData.referralContactPhoneNumber}
@@ -213,9 +216,9 @@ const ApplicationForm: React.FC<Props> = ({ eventId, onSubmit }) => {
       </div>
       <Textarea
         isRequired
-        label="Volunteer Experience"
+        label={translations.strings.experiences}
         labelPlacement="outside"
-        placeholder="Describe your volunteer experience"
+        placeholder={translations.strings.experiences}
         className="w-full"
         name="volunteerExperience"
         value={formData.volunteerExperience}
@@ -225,9 +228,9 @@ const ApplicationForm: React.FC<Props> = ({ eventId, onSubmit }) => {
       />
 
       <Textarea
-        label="Skills and Expertise"
+        label={translations.strings.skills}
         labelPlacement="outside"
-        placeholder="Describe your skills and expertise"
+        placeholder={translations.strings.skills}
         className="w-full"
         name="skillsAndExpertise"
         value={formData.skillsAndExpertise}
@@ -235,9 +238,9 @@ const ApplicationForm: React.FC<Props> = ({ eventId, onSubmit }) => {
       />
 
       <Textarea
-        label="Motivation to Volunteer"
+        label={translations.strings.motivations}
         labelPlacement="outside"
-        placeholder="What motivates you to volunteer?"
+        placeholder={translations.strings.motivations}
         className="w-full"
         name="motivationToVolunteer"
         value={formData.motivationToVolunteer}

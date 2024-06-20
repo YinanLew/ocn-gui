@@ -67,7 +67,9 @@
     "password": "Password",
     "forgotPassword": "Forgot Password?",
     "resetPassword": "Send Reset Link",
-    "totalUnissuedHours": "Unissued Hours"
+    "totalUnissuedHours": "Unissued Hours",
+    "address": "Address",
+    "referralNumber": "Referrer's number"
   },
   "siteConfig": {
     "name": "Next.js + NextUI",

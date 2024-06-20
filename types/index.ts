@@ -211,6 +211,8 @@ export type LocalizationStrings = {
   forgotPassword: string;
   resetPassword: string;
   totalUnissuedHours: string;
+  address: string;
+  referralNumber: string;
 };
 
 export type SiteConfig = {
