@@ -4,7 +4,7 @@ export const formatDateTime = (dateString: string | undefined) => {
   }
 
   const date = new Date(dateString);
-  date.setUTCHours(date.getUTCHours() - 5);
+  // date.setUTCHours(date.getUTCHours() - 5);
 
   const year = date.getUTCFullYear();
   const month = (date.getUTCMonth() + 1).toString().padStart(2, "0");
