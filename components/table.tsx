@@ -338,11 +338,11 @@ export default function TableTemp() {
           );
         case "startDate":
           return (
-            <div className="flex flex-col">{formatDate(event.startDate)}</div>
+            <div className="flex flex-col">{event.startDate}</div>
           );
         case "deadline":
           return (
-            <div className="flex flex-col">{formatDate(event.deadline)}</div>
+            <div className="flex flex-col">{event.deadline}</div>
           );
         case "applicationCount":
           // Render the applicationCount with a Link
