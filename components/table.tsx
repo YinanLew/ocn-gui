@@ -39,7 +39,8 @@ import { ChevronDownIcon } from "./chevronDownIcon";
 import { SearchIcon } from "./searchIcon";
 import { capitalize } from "./utils";
 import { getEvents } from "@/lib/getEvents";
-import { formatDate, formatDateToYearMonthDay } from "@/utils/formatDate";
+import { formatDate } from "@/utils/formatDate";
+import { formatDateToYearMonthDay } from "@/utils/formatDateToYearMonthDay";
 import { useLanguage } from "@/utils/languageContext";
 import { AuthRequiredError, DataFetchFailedError } from "@/lib/exceptions";
 
@@ -337,9 +338,17 @@ export default function TableTemp() {
             <div className="flex flex-col">{formatDate(event.releaseDate)}</div>
           );
         case "startDate":
-          return <div className="flex flex-col">{formatDateToYearMonthDay(event.startDate)}</div>;
+          return (
+            <div className="flex flex-col">
+              {formatDateToYearMonthDay(event.startDate)}
+            </div>
+          );
         case "deadline":
-          return <div className="flex flex-col">{formatDateToYearMonthDay(event.deadline)}</div>;
+          return (
+            <div className="flex flex-col">
+              {formatDateToYearMonthDay(event.deadline)}
+            </div>
+          );
         case "applicationCount":
           // Render the applicationCount with a Link
           return (
