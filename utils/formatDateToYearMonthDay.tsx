@@ -4,9 +4,11 @@ export const formatDateToYearMonthDay = (dateString: string | undefined) => {
   }
 
   const date = new Date(dateString);
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, "0"); // Adding 1 because getMonth() is zero-indexed
-  const day = String(date.getDate()).padStart(2, "0");
+
+  // Use UTC methods to avoid time zone conversion
+  const year = date.getUTCFullYear();
+  const month = String(date.getUTCMonth() + 1).padStart(2, "0"); // UTC month
+  const day = String(date.getUTCDate()).padStart(2, "0"); // UTC day
 
   return `${year}-${month}-${day}`;
 };
