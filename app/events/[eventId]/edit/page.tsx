@@ -7,7 +7,7 @@ import { getEvent } from "@/lib/getEvent";
 import { Input, Select, SelectItem, Textarea, Button } from "@nextui-org/react";
 import { EventFormData, Params } from "@/types";
 import { updateEvent } from "@/lib/updateEvent";
-import { formatDate } from "@/utils/formatDate";
+import { formatDateToYearMonthDay } from "@/utils/formatDateToYearMonthDay";
 import { AuthRequiredError } from "@/lib/exceptions";
 import { useLanguage } from "@/utils/languageContext";
 
@@ -35,9 +35,9 @@ export default function EditEventPage({ params: { eventId } }: Params) {
         const eventData = await getEvent(eventId);
         setFormData({
           ...eventData,
-          releaseDate: formatDate(eventData.releaseDate),
-          startDate: formatDate(eventData.startDate),
-          deadline: formatDate(eventData.deadline),
+          releaseDate: formatDateToYearMonthDay(eventData.releaseDate),
+          startDate: formatDateToYearMonthDay(eventData.startDate),
+          deadline: formatDateToYearMonthDay(eventData.deadline),
         });
       } catch (error) {
         console.error("Error fetching events:", error);

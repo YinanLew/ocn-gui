@@ -39,7 +39,6 @@ import { ChevronDownIcon } from "./chevronDownIcon";
 import { SearchIcon } from "./searchIcon";
 import { capitalize } from "./utils";
 import { getEvents } from "@/lib/getEvents";
-import { formatDate } from "@/utils/formatDate";
 import { formatDateToYearMonthDay } from "@/utils/formatDateToYearMonthDay";
 import { useLanguage } from "@/utils/languageContext";
 import { AuthRequiredError, DataFetchFailedError } from "@/lib/exceptions";
@@ -335,7 +334,7 @@ export default function TableTemp() {
           return <p>{event.title}</p>;
         case "releaseDate":
           return (
-            <div className="flex flex-col">{formatDate(event.releaseDate)}</div>
+            <div className="flex flex-col">{formatDateToYearMonthDay(event.releaseDate)}</div>
           );
         case "startDate":
           return (
